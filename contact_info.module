@@ -1,0 +1,114 @@
+<?php
+/**
+* @file
+* Contact info module that provides blocks and tokens.
+*/
+
+/**
+ * Implements hook_menu().
+ */
+function contact_info_menu() {
+
+  $items['admin/content/contact-info'] = array(
+    'title' => 'Contact information',
+    'file' => 'includes/contact_info.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('contact_info_setup'),
+    'access arguments' => array('modify contact info'),
+
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function contact_info_permission() {
+  return array(
+    'modify contact info' =>  array(
+      'title' => t('Modify contact information'),
+      'description' => t('Modify contact and social media information.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function contact_info_block_info() {
+  $blocks['contact_info_block'] = array(
+    'info' => t('Contact info block'),
+  );
+
+  $blocks['social_media_block'] = array(
+    'info' => t('Social media block'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function contact_info_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'contact_info_block':
+      $block['content'] = contact_info_block_content();
+      break;
+    case 'social_media_block':
+      $block['content'] = social_media_block_content();
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Content for contact info block.
+ */
+function contact_info_block_content() {
+
+  $output = array();
+
+
+
+  return $output;
+}
+
+/**
+ * Content for social media block.
+ */
+function social_media_block_content() {
+  $social_media_sites = variable_get('social_media_sites', array());
+
+  $output = array();
+
+  if ($social_media_sites) {
+    // Add css file to style icons
+    drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/style.css');
+    foreach ($social_media_sites as $social_media_site) {
+      if ($social_media_site) {
+        $output[$social_media_site] = array(
+          '#theme' => 'link',
+          '#text' => '',
+          '#path' => variable_get('social_media_' . $social_media_site),
+          '#options' => array(
+            'attributes' => array(
+              'class' => array(
+                $social_media_site,
+                'social-icon',
+              ),
+              'target' => '_blank',
+            ),
+            'html' => TRUE,
+          ),
+        );
+      }
+    }
+  }
+
+  return $output;
+}
