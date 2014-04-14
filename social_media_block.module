@@ -1,0 +1,82 @@
+<?php
+/**
+* @file
+* Adds a configurable social media block.
+*/
+
+/**
+ * Implements hook_menu().
+ */
+function social_media_block_menu() {
+
+  $items['admin/content/social-media'] = array(
+    'title' => 'Social media',
+    'file' => 'includes/contact_info.admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('social_media_block_setup'),
+    'access arguments' => array('modify social media links'),
+
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function social_media_block_block_info() {
+  $blocks['contact_info'] = array(
+    'info' => t('Social media block'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function social_media_block_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'contact_info':
+      $block['content'] = social_media_block_content();
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Content for social media block.
+ */
+function social_media_block_content() {
+  $social_media_sites = variable_get('social_media_sites', array());
+
+  $output = array();
+
+  if ($social_media_sites) {
+    foreach ($social_media_sites as $social_media_site) {
+      if ($social_media_site) {
+        $output[$social_media_site] = array(
+          '#theme' => 'link',
+          '#path' => 'http://google.com',
+          '#text' => '',
+          '#options' => array(
+            'attributes' => array(
+              'class' => array(
+                $social_media_site,
+              ),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  $output = array(
+
+  );
+
+  return $output;
+}
