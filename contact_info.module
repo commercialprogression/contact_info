@@ -4,6 +4,9 @@
 * Contact info module that provides blocks and tokens.
 */
 
+// Load default social media sites.
+module_load_include('inc', 'contact_info', 'includes/contact_info.social');
+
 /**
  * Implements hook_menu().
  */
@@ -15,7 +18,6 @@ function contact_info_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('contact_info_setup'),
     'access arguments' => array('modify contact info'),
-
   );
 
   return $items;
@@ -31,6 +33,55 @@ function contact_info_permission() {
       'description' => t('Modify contact and social media information.'),
     ),
   );
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function contact_info_token_info() {
+  $info = array();
+  // Define new token type.
+  $info['types']['contact_info'] = array(
+    'name' => t('Contact info'),
+    'description' => t('A token type that provides data from the contact info module.')
+  );
+  $info['tokens']['contact_info']['contact_info_address'] = array(
+    'name' => t('Address'),
+    'description' => t('A token containing the address entered in the contact info form.'),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function contact_info_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+
+  if ($type == 'contact_info') {
+    // Loop through available tokens.
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'contact_info_address':
+          $replacements[$original] = variable_get('contact_address', '');
+          break;
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Creates a hook that other modules can implement to set available social
+ * media sites.
+ */
+function contact_info_fetch_social_media() {
+  $social_media = module_invoke_all('contact_info_social_media_info');
+  drupal_alter('contact_info_social_media', $social_media);
+
+  return $social_media;
 }
 
 /**
@@ -82,18 +133,21 @@ function contact_info_block_content() {
  * Content for social media block.
  */
 function social_media_block_content() {
-  $social_media_sites = variable_get('social_media_sites', array());
+  // Add contact info css
+  drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/css/contact_info.css');
+
+  // Grab social media data.
+  $social_media_sites = contact_info_fetch_social_media();
+  $enabled_social_media_sites = variable_get('social_media_sites', array());
 
   $output = array();
 
-  if ($social_media_sites) {
-    // Add css file to style icons
-    drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/style.css');
-    foreach ($social_media_sites as $social_media_site) {
+  if ($enabled_social_media_sites) {
+    foreach ($enabled_social_media_sites as $social_media_site) {
       if ($social_media_site) {
         $output[$social_media_site] = array(
           '#theme' => 'link',
-          '#text' => '',
+          '#text' => $social_media_sites[$social_media_site]['key'],
           '#path' => variable_get('social_media_' . $social_media_site),
           '#options' => array(
             'attributes' => array(

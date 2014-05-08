@@ -1,0 +1,15 @@
+
+/* CSS styles for contact info module. */
+
+@font-face {
+  font-family: 'fontello';
+  src: url('../fonts/fontello.eot'); /* IE9 Compat Modes */
+  src: url('../fonts/fontello.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../fonts/fontello.woff') format('woff'), /* Modern Browsers */
+  url('../fonts/fontello.ttf')  format('truetype'), /* Safari, Android, iOS */
+  url('../fonts/fontello.svg#svgFontName') format('svg'); /* Legacy iOS */
+}
+
+.block-contact-info-social-media-block .social-icon {
+  font-family: 'fontello';
+}
