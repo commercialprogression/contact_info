@@ -68,14 +68,14 @@ function contact_info_setup($form, &$form_state) {
         $form['contact_info']['social_media'][$social_media_site]['url'] = array(
           '#title' => t('URL'),
           '#type' => 'textfield',
-          '#default_value' => $contact_info['social_media'][$social_media_site]['url'],
+          '#default_value' => isset($contact_info['social_media'][$social_media_site]['url']) ? $contact_info['social_media'][$social_media_site]['url'] : '',
           '#required' => TRUE,
         );
         $form['contact_info']['social_media'][$social_media_site]['weight'] = array(
           '#title' => t('Weight'),
           '#type' => 'select',
           '#options' => $weight_options,
-          '#default_value' => $contact_info['social_media'][$social_media_site]['weight'],
+          '#default_value' => isset($contact_info['social_media'][$social_media_site]['weight']) ? $contact_info['social_media'][$social_media_site]['weight'] : '',
         );
       }
     }

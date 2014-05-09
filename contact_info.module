@@ -43,11 +43,16 @@ function contact_info_token_info() {
   // Define new token type.
   $info['types']['contact_info'] = array(
     'name' => t('Contact info'),
-    'description' => t('A token type that provides data from the contact info module.')
+    'description' => t('A token type that provides data from the contact info module.'),
   );
+  // Define new tokens.
   $info['tokens']['contact_info']['contact_info_address'] = array(
     'name' => t('Address'),
     'description' => t('A token containing the address entered in the contact info form.'),
+  );
+  $info['tokens']['contact_info']['contact_info_phone'] = array(
+    'name' => t('Phone'),
+    'description' => t('A token containing the phone number entered in the contact info form.'),
   );
 
   return $info;
@@ -57,6 +62,9 @@ function contact_info_token_info() {
  * Implements hook_tokens().
  */
 function contact_info_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  // Grab contact info data
+  $contact_info = variable_get('contact_info', '');
+
   $replacements = array();
 
   if ($type == 'contact_info') {
@@ -64,13 +72,45 @@ function contact_info_tokens($type, $tokens, array $data = array(), array $optio
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'contact_info_address':
-          $replacements[$original] = variable_get('contact_address', '');
+          $replacements[$original] = $contact_info['contact_address'];
           break;
+        case 'contact_info_phone':
+          $replacements[$original] = $contact_info['contact_phone'];
       }
     }
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function contact_info_contextual_links_view_alter(&$element, &$items) {
+  // Contextual link to edit contact info.
+  if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == 'contact_info_block') {
+    $element['#links']['edit-content'] = array(
+      'title' => 'Edit contact info',
+      'href' => url('admin/content/contact-info', array(
+        'absolute' => TRUE,
+        'query' => array(
+          'destination' => current_path(),
+        ),
+      )),
+    );
+  }
+  // Contextual link to edit social media links.
+  if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == 'social_media_block') {
+    $element['#links']['edit-content'] = array(
+      'title' => 'Edit social media links',
+      'href' => url('admin/content/contact-info', array(
+        'absolute' => TRUE,
+        'query' => array(
+          'destination' => current_path(),
+        ),
+      )),
+    );
+  }
 }
 
 /**
@@ -121,10 +161,18 @@ function contact_info_block_view($delta = '') {
  * Content for contact info block.
  */
 function contact_info_block_content() {
+  // Grab contact info data.
+  $contact_info = variable_get('contact_info', '');
 
-  $output = array();
-
-
+  // Build render array.
+  $output = array(
+    'address' => array(
+      '#markup' => '<div class="contact-address">' . check_markup($contact_info['contact_address']) . '</div>',
+    ),
+    'phone' => array(
+      '#markup' => '<div class="contact-phone">' . $contact_info['contact_phone'] . '</div>',
+    ),
+  );
 
   return $output;
 }
