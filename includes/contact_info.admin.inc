@@ -58,7 +58,7 @@ function contact_info_setup($form, &$form_state) {
 
     // Build social media form.
     $form['contact_info']['social_media']['social_description'] = array(
-      '#markup' => '<p>' . t('Please enter a URL for each selected social media site.') . '</p>',
+      '#markup' => '<p>' . t('Please enter a URL and a weight for each social media site.') . '</p>',
     );
     foreach ($social_media_sites as $social_media_site) {
       if ($social_media_site) {
@@ -72,12 +72,14 @@ function contact_info_setup($form, &$form_state) {
           '#title' => t('URL'),
           '#type' => 'textfield',
           '#default_value' => isset($contact_info['social_media'][$social_media_site]['url']) ? $contact_info['social_media'][$social_media_site]['url'] : '',
+          '#required' => TRUE,
         );
         $form['contact_info']['social_media'][$social_media_site]['weight'] = array(
           '#title' => t('Weight'),
           '#type' => 'select',
           '#options' => $weight_options,
           '#default_value' => isset($contact_info['social_media'][$social_media_site]['weight']) ? $contact_info['social_media'][$social_media_site]['weight'] : '',
+          '#required' => TRUE,
         );
       }
     }
