@@ -184,16 +184,25 @@ function social_media_block_content() {
   // Add contact info css
   drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/css/contact_info.css');
 
+  $data = array();
+
   // Grab social media data.
   $social_media_sites = contact_info_fetch_social_media();
   $contact_info = variable_get('contact_info', '');
-  $enabled_social_media_sites = $contact_info['social_media'];
 
-  // Unset social media array, it is not used here.
-  unset($enabled_social_media_sites['social_media_sites']);
+  // Structure data for output.
+  foreach ($contact_info['social_media']['social_media_sites'] as $social_media_site) {
+    if ($social_media_site) {
+      $data[$social_media_site] = array(
+        'url' => $contact_info['social_media'][$social_media_site]['url'],
+        'weight' => $contact_info['social_media'][$social_media_site]['weight'],
+        'key' => $social_media_sites[$social_media_site]['key'],
+      );
+    }
+  }
 
-  // Sort array by weight.
-  uasort($enabled_social_media_sites, function($a, $b) {
+  // Sort data array by weight.
+  uasort($data, function($a, $b) {
     if (isset($a['weight']) && isset($b['weight'])) {
       return ($a['weight'] - $b['weight']);
     }
@@ -202,25 +211,23 @@ function social_media_block_content() {
   $output = array();
 
   // Build render array to output social media links.
-  if ($enabled_social_media_sites) {
-    foreach ($enabled_social_media_sites as $social_media_site_key => $social_media_site) {
-      if ($social_media_site) {
-        $output[$social_media_site_key] = array(
-          '#theme' => 'link',
-          '#text' => $social_media_sites[$social_media_site_key]['key'],
-          '#path' => $social_media_site['url'],
-          '#options' => array(
-            'attributes' => array(
-              'class' => array(
-                $social_media_site_key,
-                'social-icon',
-              ),
-              'target' => '_blank',
+  if ($data) {
+    foreach ($data as $social_media_site_key => $social_media_site) {
+      $output[$social_media_site_key] = array(
+        '#theme' => 'link',
+        '#text' => $social_media_site['key'],
+        '#path' => $social_media_site['url'],
+        '#options' => array(
+          'attributes' => array(
+            'class' => array(
+              $social_media_site_key,
+              'social-icon',
             ),
-            'html' => TRUE,
+            'target' => '_blank',
           ),
-        );
-      }
+          'html' => TRUE,
+        ),
+      );
     }
   }
 
