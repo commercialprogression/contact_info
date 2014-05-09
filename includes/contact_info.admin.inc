@@ -27,6 +27,8 @@ function contact_info_setup($form, &$form_state) {
   $form['contact_info']['social_media'] = array(
     '#type' => 'fieldset',
     '#title' => t('Social media'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   // Fetch social media sites.
@@ -64,6 +66,8 @@ function contact_info_setup($form, &$form_state) {
         $form['contact_info']['social_media'][$social_media_site] = array(
           '#type' => 'fieldset',
           '#title' => t('%social_media_site', array('%social_media_site' => $social_media[$social_media_site]['name'])),
+          '#collapsible' => TRUE,
+          '#collapsed' => TRUE,
         );
         $form['contact_info']['social_media'][$social_media_site]['url'] = array(
           '#title' => t('URL'),
