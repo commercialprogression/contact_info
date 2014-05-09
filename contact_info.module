@@ -138,21 +138,33 @@ function social_media_block_content() {
 
   // Grab social media data.
   $social_media_sites = contact_info_fetch_social_media();
-  $enabled_social_media_sites = variable_get('social_media_sites', array());
+  $contact_info = variable_get('contact_info', '');
+  $enabled_social_media_sites = $contact_info['social_media'];
+
+  // Unset social media array, it is not used here.
+  unset($enabled_social_media_sites['social_media_sites']);
+
+  // Sort array by weight.
+  uasort($enabled_social_media_sites, function($a, $b) {
+    if (isset($a['weight']) && isset($b['weight'])) {
+      return ($a['weight'] - $b['weight']);
+    }
+  });
 
   $output = array();
 
+  // Build render array to output social media links.
   if ($enabled_social_media_sites) {
-    foreach ($enabled_social_media_sites as $social_media_site) {
+    foreach ($enabled_social_media_sites as $social_media_site_key => $social_media_site) {
       if ($social_media_site) {
-        $output[$social_media_site] = array(
+        $output[$social_media_site_key] = array(
           '#theme' => 'link',
-          '#text' => $social_media_sites[$social_media_site]['key'],
-          '#path' => variable_get('social_media_' . $social_media_site),
+          '#text' => $social_media_sites[$social_media_site_key]['key'],
+          '#path' => $social_media_site['url'],
           '#options' => array(
             'attributes' => array(
               'class' => array(
-                $social_media_site,
+                $social_media_site_key,
                 'social-icon',
               ),
               'target' => '_blank',
