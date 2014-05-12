@@ -75,7 +75,7 @@ function contact_info_tokens($type, $tokens, array $data = array(), array $optio
           $replacements[$original] = $contact_info['contact_address'];
           break;
         case 'contact_info_phone':
-          $replacements[$original] = $contact_info['contact_phone'];
+          $replacements[$original] = $contact_info['contact_phone']['number'];
       }
     }
   }
