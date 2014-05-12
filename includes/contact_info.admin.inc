@@ -19,9 +19,39 @@ function contact_info_setup($form, &$form_state) {
   );
 
   $form['contact_info']['contact_phone'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Phone'),
+  );
+
+  $form['contact_info']['contact_phone']['label'] = array(
     '#type' => 'textfield',
-    '#title' => t('Phone number'),
-    '#default_value' => isset($contact_info['contact_phone']) ? $contact_info['contact_phone'] : '',
+    '#title' => t('Label'),
+    '#description' => t('Optionally, provide a label for the phone field.'),
+    '#default_value' => isset($contact_info['contact_phone']['label']) ? $contact_info['contact_phone']['label'] : '',
+  );
+
+  $form['contact_info']['contact_phone']['number'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Number'),
+    '#default_value' => isset($contact_info['contact_phone']['number']) ? $contact_info['contact_phone']['number'] : '',
+  );
+
+  $form['contact_info']['contact_fax'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Fax'),
+  );
+
+  $form['contact_info']['contact_fax']['label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Label'),
+    '#description' => t('Optionally, provide a label for the fax field.'),
+    '#default_value' => isset($contact_info['contact_fax']['label']) ? $contact_info['contact_fax']['label'] : '',
+  );
+
+  $form['contact_info']['contact_fax']['number'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Number'),
+    '#default_value' => isset($contact_info['contact_fax']['number']) ? $contact_info['contact_fax']['number'] : '',
   );
 
   $form['contact_info']['social_media'] = array(

@@ -170,7 +170,24 @@ function contact_info_block_content() {
       '#markup' => '<div class="contact-address">' . check_markup($contact_info['contact_address']) . '</div>',
     ),
     'phone' => array(
-      '#markup' => '<div class="contact-phone">' . $contact_info['contact_phone'] . '</div>',
+      '#prefix' => '<div class="contact-phone">',
+      'phone_label' => array(
+        '#markup' => isset($contact_info['contact_phone']['label']) ? '<span class="contact-phone-label">' . $contact_info['contact_phone']['label'] . '</span>' : '',
+      ),
+      'phone_number' => array(
+        '#markup' => '<span class="contact-phone">' . $contact_info['contact_phone']['number'] . '</span>',
+      ),
+      '#suffix' => '</div>',
+    ),
+    'fax' => array(
+      '#prefix' => '<div class="contact-fax">',
+      'fax_label' => array(
+        '#markup' => isset($contact_info['contact_fax']['label']) ? '<span class="contact-fax-label">' . $contact_info['contact_fax']['label'] . '</span>': '',
+      ),
+      'fax_number' => array(
+        '#markup' => '<span class="fax-phone">' . $contact_info['contact_fax']['number'] . '</span>',
+      ),
+      '#suffix' => '</div>',
     ),
   );
 
