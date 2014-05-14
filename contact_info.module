@@ -164,6 +164,12 @@ function contact_info_block_content() {
   // Grab contact info data.
   $contact_info = variable_get('contact_info', '');
 
+  // Format telephone number for dialing.
+  if (isset($contact_info['contact_phone']['number']) && $contact_info['contact_phone']['number']) {
+    // Strip out everything but numbers.
+    $number = preg_replace('/[^0-9]/', '', $contact_info['contact_phone']['number']);
+  }
+
   // Build render array.
   $output = array(
     'address' => array(
@@ -175,7 +181,7 @@ function contact_info_block_content() {
         '#markup' => isset($contact_info['contact_phone']['label']) ? '<span class="contact-phone-label">' . $contact_info['contact_phone']['label'] . '</span>' : '',
       ),
       'phone_number' => array(
-        '#markup' => '<span class="contact-phone">' . $contact_info['contact_phone']['number'] . '</span>',
+        '#markup' => '<a class="contact-phone" href="tel:+' . $contact_info['contact_phone']['country_code'] . $number . '">' . $contact_info['contact_phone']['number'] . '</a>',
       ),
       '#suffix' => '</div>',
     ),

@@ -30,6 +30,13 @@ function contact_info_setup($form, &$form_state) {
     '#default_value' => isset($contact_info['contact_phone']['label']) ? $contact_info['contact_phone']['label'] : '',
   );
 
+  $form['contact_info']['contact_phone']['country_code'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Country code'),
+    '#default_value' => isset($contact_info['contact_phone']['country_code']) ? $contact_info['contact_phone']['country_code'] : '',
+    '#size' => 4,
+  );
+
   $form['contact_info']['contact_phone']['number'] = array(
     '#type' => 'textfield',
     '#title' => t('Number'),
