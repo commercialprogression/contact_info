@@ -36,6 +36,18 @@ function contact_info_permission() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function contact_info_theme() {
+  return array(
+    'contact_info_social_media_draggable_table' => array(
+      'render element' => 'form',
+      'file' => 'includes/contact_info.admin.inc',
+    ),
+  );
+}
+
+/**
  * Implements hook_token_info().
  */
 function contact_info_token_info() {

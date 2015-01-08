@@ -8,9 +8,8 @@ function contact_info_setup($form, &$form_state) {
   // Load existing contact info
   $contact_info = variable_get('contact_info', '');
 
-  $form = array(
-    '#tree' => TRUE,
-  );
+  // Make that form a tree.
+  $form['#tree'] = TRUE;
 
   $form['contact_info']['contact_address'] = array(
     '#type' => 'textarea',
@@ -61,66 +60,94 @@ function contact_info_setup($form, &$form_state) {
     '#default_value' => isset($contact_info['contact_fax']['number']) ? $contact_info['contact_fax']['number'] : '',
   );
 
+  // Fetch social media sites.
+  $social_media = contact_info_fetch_social_media();
+  
   $form['contact_info']['social_media'] = array(
     '#type' => 'fieldset',
     '#title' => t('Social media'),
-    '#collapsible' => TRUE,
+    '#theme' => 'contact_info_social_media_draggable_table',
   );
-
-  // Fetch social media sites.
-  $social_media = contact_info_fetch_social_media();
-
-  // Build options array.
+  
+  // Loop through available social media and build out table.
   foreach ($social_media as $key => $value) {
-    $options[$key] = $value['name'];
-  }
-
-  // Grab any selected social media sites.
-  $social_media_sites = $contact_info['social_media']['social_media_sites'];
-
-  // Build checkboxes.
-  $form['contact_info']['social_media']['social_media_sites'] = array(
-    '#type' => 'checkboxes',
-    '#options' => $options,
-    '#default_value' => isset($contact_info['social_media']['social_media_sites']) ? $contact_info['social_media']['social_media_sites'] : array(),
-  );
-
-  // Loop through each site and create a URL field.
-  if ($social_media_sites) {
-
-    // Set weight options.
-    for ($i = 1; $i <= count($social_media_sites); $i++) {
-      $weight_options[] = $i;
-    }
-
-    // Build social media form.
-    $form['contact_info']['social_media']['social_description'] = array(
-      '#markup' => '<p>' . t('Please enter a URL and a weight for each social media site.') . '</p>',
+    $form['contact_info']['social_media'][$key]['name'] = array(
+      '#markup' => $value['name'],
     );
-    foreach ($social_media_sites as $social_media_site) {
-      if ($social_media_site) {
-        $form['contact_info']['social_media'][$social_media_site] = array(
-          '#type' => 'fieldset',
-          '#title' => t('%social_media_site', array('%social_media_site' => $social_media[$social_media_site]['name'])),
-          '#collapsible' => TRUE,
-          '#collapsed' => TRUE,
-        );
-        $form['contact_info']['social_media'][$social_media_site]['url'] = array(
-          '#title' => t('URL'),
-          '#type' => 'textfield',
-          '#default_value' => isset($contact_info['social_media'][$social_media_site]['url']) ? $contact_info['social_media'][$social_media_site]['url'] : '',
-          '#required' => TRUE,
-        );
-        $form['contact_info']['social_media'][$social_media_site]['weight'] = array(
-          '#title' => t('Weight'),
-          '#type' => 'select',
-          '#options' => $weight_options,
-          '#default_value' => isset($contact_info['social_media'][$social_media_site]['weight']) ? $contact_info['social_media'][$social_media_site]['weight'] : '',
-          '#required' => TRUE,
-        );
-      }
-    }
+    
+    $form['contact_info']['social_media'][$key]['url'] = array(
+      '#type' => 'textfield',
+      '#default_value' => isset($contact_info['social_media'][$key]['url']) ? $contact_info['social_media'][$key]['url'] : '',
+    );
+    
+    $form['contact_info']['social_media'][$key]['icon'] = array(
+      '#type' => 'managed_file',
+    );
+    
+    $form['contact_info']['social_media'][$key]['enable'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => isset($contact_info['social_media'][$key]['enable']) ? $contact_info['social_media'][$key]['enable'] : '',
+    );
+    
+    $form['contact_info']['social_media'][$key]['weight'] = array(
+      '#type' => 'weight',
+      '#title' => t('Weight'),
+      '#default_value' => isset($contact_info['social_media'][$key]['weight']) ? $contact_info['social_media'][$key]['weight'] : '',
+      '#delta' => 10,
+      '#title_display' => 'invisible',
+    );
+
+  }
+  
+  $form['actions'] = array('#type' => 'actions');
+  return system_settings_form($form);
+}
+
+/**
+ * Theme function to render draggable table.
+ */
+function theme_contact_info_social_media_draggable_table($variables) {
+  $form = $variables['form'];
+  
+  // Initialize the variable which will store our table rows.
+  $rows = array();
+
+  // Loop through the kids.
+  foreach (element_children($form) as $id) {
+
+    // Add a weight class. Featherweight...
+    $form[$id]['weight']['#attributes']['class'] = array('item-row-weight');
+    
+    // Build out the table rows.
+    $rows[] = array(
+      'data' => array(
+        drupal_render($form[$id]['name']),
+        drupal_render($form[$id]['url']),
+        drupal_render($form[$id]['icon']),
+        drupal_render($form[$id]['enable']),
+        drupal_render($form[$id]['weight']),
+      ),
+      // Assign each row a draggable class.
+      'class' => array('draggable'),
+    );
   }
 
-  return system_settings_form($form);
+  // Build out that header.
+  $header = array(t('Name'), t('URL'), t('Icon'), t('Enable'), t('Weight'));
+
+  // Declare table id.
+  $table_id = 'items-table';
+  
+  // Put the table together.
+  $output = theme('table', array(
+    'header' => $header,
+    'rows' => $rows,
+    'attributes' => array('id' => $table_id),
+  ));
+
+  // Add that drag.
+  drupal_add_tabledrag($table_id, 'order', 'sibling', 'item-row-weight');
+
+  return $output;
+  
 }
