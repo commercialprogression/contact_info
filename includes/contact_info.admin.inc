@@ -63,6 +63,16 @@ function contact_info_setup($form, &$form_state) {
   // Fetch social media sites.
   $social_media = contact_info_fetch_social_media();
   
+  // Find social media weights.
+  if ($social_media) {
+    foreach ($social_media as $social_media_key => $social_media_value) {
+      $social_media[$social_media_key]['weight'] = $contact_info['social_media'][$social_media_key]['weight'];
+    }
+    
+    // Sort the sites by their weight.
+    uasort($social_media, 'contact_info_sort_weight');
+  }
+  
   $form['contact_info']['social_media'] = array(
     '#type' => 'fieldset',
     '#title' => t('Social media'),
@@ -71,6 +81,18 @@ function contact_info_setup($form, &$form_state) {
   
   // Loop through available social media and build out table.
   foreach ($social_media as $key => $value) {
+    
+    $form['contact_info']['social_media'][$key]['key'] = array(
+      '#type' => 'value',
+      '#value' => $value['key'],
+    );
+    
+    $form['contact_info']['social_media'][$key]['icon'] = array(
+      '#prefix' => '<span class="contact-info-social-icon">',
+      '#suffix' => '</span>',
+      '#markup' => $value['key'],
+    );
+    
     $form['contact_info']['social_media'][$key]['name'] = array(
       '#markup' => $value['name'],
     );
@@ -78,10 +100,6 @@ function contact_info_setup($form, &$form_state) {
     $form['contact_info']['social_media'][$key]['url'] = array(
       '#type' => 'textfield',
       '#default_value' => isset($contact_info['social_media'][$key]['url']) ? $contact_info['social_media'][$key]['url'] : '',
-    );
-    
-    $form['contact_info']['social_media'][$key]['icon'] = array(
-      '#type' => 'managed_file',
     );
     
     $form['contact_info']['social_media'][$key]['enable'] = array(
@@ -99,7 +117,6 @@ function contact_info_setup($form, &$form_state) {
 
   }
   
-  $form['actions'] = array('#type' => 'actions');
   return system_settings_form($form);
 }
 
@@ -108,6 +125,9 @@ function contact_info_setup($form, &$form_state) {
  */
 function theme_contact_info_social_media_draggable_table($variables) {
   $form = $variables['form'];
+  
+  // Add contact info css
+  drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/css/contact_info.css');
   
   // Initialize the variable which will store our table rows.
   $rows = array();
@@ -149,5 +169,4 @@ function theme_contact_info_social_media_draggable_table($variables) {
   drupal_add_tabledrag($table_id, 'order', 'sibling', 'item-row-weight');
 
   return $output;
-  
 }

@@ -226,22 +226,18 @@ function social_media_block_content() {
   $contact_info = variable_get('contact_info', '');
 
   // Structure data for output.
-  foreach ($contact_info['social_media']['social_media_sites'] as $social_media_site) {
-    if ($social_media_site) {
-      $data[$social_media_site] = array(
-        'url' => $contact_info['social_media'][$social_media_site]['url'],
-        'weight' => $contact_info['social_media'][$social_media_site]['weight'],
-        'key' => $social_media_sites[$social_media_site]['key'],
+  foreach ($contact_info['social_media'] as $key => $social_media_site) {
+    if ($social_media_site && $social_media_site['enable']) {
+      $data[$key] = array(
+        'url' => $social_media_site['url'],
+        'weight' => $social_media_site['weight'],
+        'key' => $social_media_site['key'],
       );
     }
   }
 
   // Sort data array by weight.
-  uasort($data, function($a, $b) {
-    if (isset($a['weight']) && isset($b['weight'])) {
-      return ($a['weight'] - $b['weight']);
-    }
-  });
+  uasort($data, 'contact_info_sort_weight');
 
   $output = array();
 
@@ -256,7 +252,7 @@ function social_media_block_content() {
           'attributes' => array(
             'class' => array(
               $social_media_site_key,
-              'social-icon',
+              'contact-info-social-icon',
             ),
             'target' => '_blank',
           ),
@@ -267,4 +263,13 @@ function social_media_block_content() {
   }
 
   return $output;
+}
+
+/**
+ * Helper function to sort weights.
+ */
+function contact_info_sort_weight($a, $b) {
+  if (isset($a['weight']) && isset($b['weight'])) {
+    return ($a['weight'] - $b['weight']);
+  }
 }

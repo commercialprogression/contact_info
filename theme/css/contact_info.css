@@ -10,6 +10,7 @@
   url('../fonts/fontello.svg#svgFontName') format('svg'); /* Legacy iOS */
 }
 
-.block-contact-info-social-media-block .social-icon {
+.contact-info-social-icon {
   font-family: 'fontello';
+  font-size: 20px;
 }
