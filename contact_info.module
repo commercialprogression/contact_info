@@ -4,14 +4,10 @@
 * Contact info module that provides blocks and tokens.
 */
 
-// Load default social media sites.
-module_load_include('inc', 'contact_info', 'includes/contact_info.social');
-
 /**
  * Implements hook_menu().
  */
 function contact_info_menu() {
-
   $items['admin/content/contact-info'] = array(
     'title' => 'Contact information',
     'file' => 'includes/contact_info.admin.inc',
@@ -44,7 +40,31 @@ function contact_info_theme() {
       'render element' => 'form',
       'file' => 'includes/contact_info.admin.inc',
     ),
+    'contact_info_address' => array(
+      'variables' => array(
+        'country_name' => NULL,
+        'legal_name' => NULL,
+        'street_address' => NULL,
+        'locality' => NULL,
+        'region' => NULL,
+        'postal_code' => NULL,
+        'phone' => NULL,
+        'fax' => NULL,
+      ),
+      'template' => 'contact_info_address',
+    ),
   );
+}
+
+/**
+ * Processes variables twitter_pull templates.
+ */
+function contact_info_preprocess(&$variables, $hook) {
+  switch ($hook) {
+    case 'contact_info_address':
+      // Any preprocessing should go here.
+      break;
+  }
 }
 
 /**
@@ -126,17 +146,6 @@ function contact_info_contextual_links_view_alter(&$element, &$items) {
 }
 
 /**
- * Creates a hook that other modules can implement to set available social
- * media sites.
- */
-function contact_info_fetch_social_media() {
-  $social_media = module_invoke_all('contact_info_social_media_info');
-  drupal_alter('contact_info_social_media', $social_media);
-
-  return $social_media;
-}
-
-/**
  * Implements hook_block_info().
  */
 function contact_info_block_info() {
@@ -175,40 +184,58 @@ function contact_info_block_view($delta = '') {
 function contact_info_block_content() {
   // Grab contact info data.
   $contact_info = variable_get('contact_info', '');
+  
+  // Set up variables to send to the theme function.
+  $variables = array();
+  
+  // Phone.
+  $phone = $contact_info['contact_phone'];
+  if (isset($phone['number']) && $phone['number']) {
+    if (!isset($phone['label']) || !strlen($phone['label'])) {
+      $phone['label'] = 'Phone';
+    }
+    
+    if (!isset($phone['country_code']) && !strlen($phone['country_code'])) {
+      $phone['country_code'] = '1';
+    }
 
-  // Format telephone number for dialing.
-  if (isset($contact_info['contact_phone']['number']) && $contact_info['contact_phone']['number']) {
-    // Strip out everything but numbers.
-    $number = preg_replace('/[^0-9]/', '', $contact_info['contact_phone']['number']);
+    $phone['machine'] = preg_replace('/[^0-9]/', '', $contact_info['contact_phone']['number']);
+    $variables['phone'] = check_plain($phone['label']) . ': ' .  
+      l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
+        'attributes' => array(
+          'itemprop' => 'telephone',
+          'class' => array('telephone'),
+        ),
+      ));
+  }
+  
+  // Fax.
+  $fax = $contact_info['contact_fax'];
+  if (isset($fax['number']) && $fax['number']) {
+    if (!isset($fax['label']) || !strlen($fax['label'])) {
+      $fax['label'] = 'Fax';
+    }
+
+    $variables['fax'] = check_plain($fax['label']) . ': ' . 
+      '<span itemprop="faxNumber">' . check_plain($fax['number']) . '</span>';
+  }
+  
+  // Address.
+  $mappings = array(
+    'country-name' => 'country_name',
+    'legalName' => 'legal_name',
+    'street-address' => 'street_address',
+    'locality' => 'locality',
+    'region' => 'region',
+    'postal-code' => 'postal_code',
+  );
+  foreach ($contact_info['contact_address'] as $key => $value) {
+    if (isset($value) && strlen($value)) {
+      $variables[$mappings[$key]] = check_plain($value);
+    }
   }
 
-  // Build render array.
-  $output = array(
-    'address' => array(
-      '#markup' => '<div class="contact-address">' . check_markup($contact_info['contact_address']) . '</div>',
-    ),
-    'phone' => array(
-      '#prefix' => '<div class="contact-phone">',
-      'phone_label' => array(
-        '#markup' => isset($contact_info['contact_phone']['label']) ? '<span class="contact-phone-label">' . $contact_info['contact_phone']['label'] . '</span>' : '',
-      ),
-      'phone_number' => array(
-        '#markup' => '<a class="contact-phone" href="tel:+' . $contact_info['contact_phone']['country_code'] . $number . '">' . $contact_info['contact_phone']['number'] . '</a>',
-      ),
-      '#suffix' => '</div>',
-    ),
-    'fax' => array(
-      '#prefix' => '<div class="contact-fax">',
-      'fax_label' => array(
-        '#markup' => isset($contact_info['contact_fax']['label']) ? '<span class="contact-fax-label">' . $contact_info['contact_fax']['label'] . '</span>': '',
-      ),
-      'fax_number' => array(
-        '#markup' => '<span class="fax-phone">' . $contact_info['contact_fax']['number'] . '</span>',
-      ),
-      '#suffix' => '</div>',
-    ),
-  );
-
+  $output = theme('contact_info_address', $variables);
   return $output;
 }
 
@@ -216,13 +243,8 @@ function contact_info_block_content() {
  * Content for social media block.
  */
 function social_media_block_content() {
-  // Add contact info css
-  drupal_add_css(drupal_get_path('module', 'contact_info') . '/theme/css/contact_info.css');
-
   $data = array();
 
-  // Grab social media data.
-  $social_media_sites = contact_info_fetch_social_media();
   $contact_info = variable_get('contact_info', '');
 
   // Structure data for output.
