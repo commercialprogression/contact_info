@@ -136,6 +136,7 @@ function contact_info_contextual_links_view_alter(&$element, &$items) {
     $element['#links']['edit-content'] = array(
       'title' => 'Edit social media links',
       'href' => url('admin/content/contact-info', array(
+        'fragment' => 'contact-info-social-media-wrapper',
         'absolute' => TRUE,
         'query' => array(
           'destination' => current_path(),
@@ -248,12 +249,12 @@ function social_media_block_content() {
   $contact_info = variable_get('contact_info', '');
 
   // Structure data for output.
-  foreach ($contact_info['social_media'] as $key => $social_media_site) {
+  foreach ($contact_info['social_media']['table'] as $key => $social_media_site) {
     if ($social_media_site && $social_media_site['enable']) {
       $data[$key] = array(
         'url' => $social_media_site['url'],
         'weight' => $social_media_site['weight'],
-        'key' => $social_media_site['key'],
+        'name' => $social_media_site['name'],
       );
     }
   }
@@ -265,20 +266,20 @@ function social_media_block_content() {
 
   // Build render array to output social media links.
   if ($data) {
+    // Start building out social media stuffs.
+    $output['social_media'] = array(
+      '#prefix' => '<div class="social">',
+      '#suffix' => '</div>',
+    );
+
     foreach ($data as $social_media_site_key => $social_media_site) {
-      $output[$social_media_site_key] = array(
+      $output['social_media'][$social_media_site_key] = array(
         '#theme' => 'link',
-        '#text' => $social_media_site['key'],
+        '#text' => $social_media_site['name'],
         '#path' => $social_media_site['url'],
         '#options' => array(
-          'attributes' => array(
-            'class' => array(
-              $social_media_site_key,
-              'contact-info-social-icon',
-            ),
-            'target' => '_blank',
-          ),
           'html' => TRUE,
+          'attributes' => array(),
         ),
       );
     }
