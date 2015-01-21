@@ -11,91 +11,112 @@ function contact_info_setup($form, &$form_state) {
   // Make that form a tree.
   $form['#tree'] = TRUE;
 
-  $form['contact_info']['contact_address'] = array(
+  $form['contact_info']['address'] = array(
     '#type' => 'fieldset',
     '#title' => t('Address'),
     '#collapsible' => TRUE,
   );
   // Get core countries to avoid a Countries module dependency.
   include_once DRUPAL_ROOT . '/includes/locale.inc';
-  $form['contact_info']['contact_address']['country-name'] = array(
+  $form['contact_info']['address']['country_name'] = array(
     '#type' => 'select',
-    '#default_value' => isset($contact_info['contact_address']['country-name']) ? $contact_info['contact_address']['country-name'] : 'US',
+    '#default_value' => isset($contact_info['address']['country_name']) ? $contact_info['address']['country_name'] : 'US',
     '#title' => t('Country'),
     '#options' => country_get_list(),
   );
-  $form['contact_info']['contact_address']['legalName'] = array(
+  $form['contact_info']['address']['legal_name'] = array(
     '#type' => 'textfield',
-    '#default_value' => isset($contact_info['contact_address']['legalName']) ? $contact_info['contact_address']['legalName'] : '',
+    '#default_value' => isset($contact_info['address']['legal_name']) ? $contact_info['address']['legal_name'] : '',
     '#title' => t('Legal Name'),
   );
-  $form['contact_info']['contact_address']['street-address'] = array(
+  $form['contact_info']['address']['street_address'] = array(
     '#type' => 'textfield',
-    '#default_value' => isset($contact_info['contact_address']['street-address']) ? $contact_info['contact_address']['street-address'] : '',
+    '#default_value' => isset($contact_info['address']['street_address']) ? $contact_info['address']['street_address'] : '',
     '#title' => t('Street address'),
   );
-  $form['contact_info']['contact_address']['locality'] = array(
+  $form['contact_info']['address']['locality'] = array(
     '#type' => 'textfield',
-    '#default_value' => isset($contact_info['contact_address']['locality']) ? $contact_info['contact_address']['locality'] : '',
+    '#default_value' => isset($contact_info['address']['locality']) ? $contact_info['address']['locality'] : '',
     '#title' => t('Locality'),
     '#description' => t('The city, township, or administrative area'),
   );
-  $form['contact_info']['contact_address']['region'] = array(
+  $form['contact_info']['address']['region'] = array(
     '#type' => 'textfield',
-    '#default_value' => isset($contact_info['contact_address']['region']) ? $contact_info['contact_address']['region'] : '',
+    '#default_value' => isset($contact_info['address']['region']) ? $contact_info['address']['region'] : '',
     '#title' => t('Region'),
     '#description' => t('For instance, MI if you\'re located in Michigan'),
   );
-  $form['contact_info']['contact_address']['postal-code'] = array(
+  $form['contact_info']['address']['postal_code'] = array(
     '#type' => 'textfield',
-    '#default_value' => isset($contact_info['contact_address']['postal-code']) ? $contact_info['contact_address']['postal-code'] : '',
+    '#default_value' => isset($contact_info['address']['postal_code']) ? $contact_info['address']['postal_code'] : '',
     '#title' => t('Postal code'),
   );
 
   // Phone.
-  $form['contact_info']['contact_phone'] = array(
+  $form['contact_info']['phone'] = array(
     '#type' => 'fieldset',
     '#title' => t('Phone'),
     '#collapsible' => TRUE,
   );
-  $form['contact_info']['contact_phone']['label'] = array(
+  $form['contact_info']['phone']['label'] = array(
     '#type' => 'textfield',
     '#title' => t('Label'),
     '#description' => t('Optionally, provide a label for the phone field.'),
-    '#default_value' => isset($contact_info['contact_phone']['label']) ? $contact_info['contact_phone']['label'] : '',
+    '#default_value' => isset($contact_info['phone']['label']) ? $contact_info['phone']['label'] : '',
   );
-  $form['contact_info']['contact_phone']['country_code'] = array(
+  $form['contact_info']['phone']['country_code'] = array(
     '#type' => 'textfield',
     '#title' => t('Country code'),
-    '#default_value' => isset($contact_info['contact_phone']['country_code']) ? $contact_info['contact_phone']['country_code'] : '',
+    '#default_value' => isset($contact_info['phone']['country_code']) ? $contact_info['phone']['country_code'] : '',
     '#size' => 4,
   );
-  $form['contact_info']['contact_phone']['number'] = array(
+  $form['contact_info']['phone']['number'] = array(
     '#type' => 'textfield',
     '#title' => t('Number'),
-    '#default_value' => isset($contact_info['contact_phone']['number']) ? $contact_info['contact_phone']['number'] : '',
+    '#default_value' => isset($contact_info['phone']['number']) ? $contact_info['phone']['number'] : '',
   );
 
   // Fax.
-  $form['contact_info']['contact_fax'] = array(
+  $form['contact_info']['fax'] = array(
     '#type' => 'fieldset',
     '#title' => t('Fax'),
     '#collapsible' => TRUE,
   );
-  $form['contact_info']['contact_fax']['label'] = array(
+  $form['contact_info']['fax']['label'] = array(
     '#type' => 'textfield',
     '#title' => t('Label'),
     '#description' => t('Optionally, provide a label for the fax field.'),
-    '#default_value' => isset($contact_info['contact_fax']['label']) ? $contact_info['contact_fax']['label'] : '',
+    '#default_value' => isset($contact_info['fax']['label']) ? $contact_info['fax']['label'] : '',
   );
-  $form['contact_info']['contact_fax']['number'] = array(
+  $form['contact_info']['fax']['number'] = array(
     '#type' => 'textfield',
     '#title' => t('Number'),
-    '#default_value' => isset($contact_info['contact_fax']['number']) ? $contact_info['contact_fax']['number'] : '',
+    '#default_value' => isset($contact_info['fax']['number']) ? $contact_info['fax']['number'] : '',
   );
 
+  // Social SEO.
+  $form['contact_info']['social_seo'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Social SEO'),
+    '#description' => t('Social links and accounts that aid search engines.'),
+    '#collapsible' => TRUE,
+  );
+  $form['contact_info']['social_seo']['site_twitter'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site Twitter'),
+    '#description' => t('The Twitter handle for the whole site, like @ao5357'),
+    '#default_value' => isset($contact_info['social_seo']['site_twitter']) ? $contact_info['social_seo']['site_twitter'] : '',
+  );
+  $form['contact_info']['social_seo']['site_google_plus'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Google+ Page'),
+    '#description' => t('URL to site\'s Google+ page, like https://plus.google.com/103212176392756352243/'),
+    '#default_value' => isset($contact_info['social_seo']['site_google_plus']) ? $contact_info['social_seo']['site_google_plus'] : '',
+  );
+
+
   // Social media.
-  $form['contact_info']['social_media'] = array(
+  $form['contact_info']['social'] = array(
     '#type' => 'fieldset',
     '#title' => t('Social media'),
     '#prefix' => '<div id="contact-info-social-media-wrapper">',
@@ -103,71 +124,71 @@ function contact_info_setup($form, &$form_state) {
     '#collapsible' => TRUE,
   );
 
-  $form['contact_info']['social_media']['table'] = array(
-    '#theme' => 'contact_info_social_media_draggable_table',
+  $form['contact_info']['social']['table'] = array(
+    '#theme' => 'contact_info_social_draggable_table',
   );
 
   // Check to see how many social media rows we need.
-  if (isset($contact_info['social_media']['table']) && !$form_state['rebuild']) {
-    $form_state['social_media_rows'] = count($contact_info['social_media']['table']);
+  if (isset($contact_info['social']['table']) && !$form_state['rebuild']) {
+    $form_state['social_rows'] = count($contact_info['social']['table']);
   }
-  elseif (!isset($form_state['social_media_rows'])) {
-    $form_state['social_media_rows'] = 1;
+  elseif (!isset($form_state['social_rows'])) {
+    $form_state['social_rows'] = 1;
   }
 
-  for ($i = 1; $i <= $form_state['social_media_rows']; $i++) {
-     $form['contact_info']['social_media']['table'][$i]['name'] = array(
+  for ($i = 1; $i <= $form_state['social_rows']; $i++) {
+    $form['contact_info']['social']['table'][$i]['name'] = array(
       '#type' => 'textfield',
-      '#default_value' => isset($contact_info['social_media']['table'][$i]['name']) ? $contact_info['social_media']['table'][$i]['name'] : '',
+      '#default_value' => isset($contact_info['social']['table'][$i]['name']) ? $contact_info['social']['table'][$i]['name'] : '',
     );
 
-    $form['contact_info']['social_media']['table'][$i]['icon'] = array(
+    $form['contact_info']['social']['table'][$i]['icon'] = array(
       '#prefix' => '<span class="social">',
       '#suffix' => '</span>',
     );
 
     // Add icon if any social media rows are present,
-    if (isset($contact_info['social_media']['table'][$i]['url'])) {
-      $form['contact_info']['social_media']['table'][$i]['icon']['link'] = array(
-        '#markup' => l($contact_info['social_media']['table'][$i]['name'], $contact_info['social_media']['table'][$i]['url']),
+    if (isset($contact_info['social']['table'][$i]['url'])) {
+      $form['contact_info']['social']['table'][$i]['icon']['link'] = array(
+        '#markup' => l($contact_info['social']['table'][$i]['name'], $contact_info['social']['table'][$i]['url']),
       );
     }
 
-    $form['contact_info']['social_media']['table'][$i]['url'] = array(
+    $form['contact_info']['social']['table'][$i]['url'] = array(
       '#type' => 'textfield',
-      '#default_value' => isset($contact_info['social_media']['table'][$i]['url']) ? $contact_info['social_media']['table'][$i]['url'] : '',
+      '#default_value' => isset($contact_info['social']['table'][$i]['url']) ? $contact_info['social']['table'][$i]['url'] : '',
     );
 
-    $form['contact_info']['social_media']['table'][$i]['enable'] = array(
+    $form['contact_info']['social']['table'][$i]['enable'] = array(
       '#type' => 'checkbox',
-      '#default_value' => isset($contact_info['social_media']['table'][$i]['enable']) ? $contact_info['social_media']['table'][$i]['enable'] : '',
+      '#default_value' => isset($contact_info['social']['table'][$i]['enable']) ? $contact_info['social']['table'][$i]['enable'] : '',
     );
 
-    $form['contact_info']['social_media']['table'][$i]['weight'] = array(
+    $form['contact_info']['social']['table'][$i]['weight'] = array(
       '#type' => 'weight',
-      '#default_value' => isset($contact_info['social_media']['table'][$i]['weight']) ? $contact_info['social_media']['table'][$i]['weight'] : 10,
+      '#default_value' => isset($contact_info['social']['table'][$i]['weight']) ? $contact_info['social']['table'][$i]['weight'] : 10,
     );
   }
 
-  $form['contact_info']['social_media']['add_social_media_row'] = array(
+  $form['contact_info']['social']['add_social_row'] = array(
     '#type' => 'submit',
     '#value' => t('Add social media'),
-    '#submit' => array('contact_info_add_social_media'),
+    '#submit' => array('contact_info_add_social'),
     '#ajax' => array(
-      'callback' => 'contact_info_social_media_callback',
+      'callback' => 'contact_info_social_callback',
       'wrapper' => 'contact-info-social-media-wrapper',
     ),
     '#limit_validation_errors' => array(),
   );
 
   // Show the remove button if more than one row is present.
-  if ($form_state['social_media_rows'] > 1) {
-    $form['contact_info']['social_media']['remove_social_media_row'] = array(
+  if ($form_state['social_rows'] > 1) {
+    $form['contact_info']['social']['remove_social_row'] = array(
       '#type' => 'submit',
       '#value' => t('Remove social media'),
-      '#submit' => array('contact_info_remove_social_media'),
+      '#submit' => array('contact_info_remove_social'),
       '#ajax' => array(
-        'callback' => 'contact_info_social_media_callback',
+        'callback' => 'contact_info_social_callback',
         'wrapper' => 'contact-info-social-media-wrapper',
       ),
       '#limit_validation_errors' => array(),
@@ -180,32 +201,32 @@ function contact_info_setup($form, &$form_state) {
 /**
  * AJAX callback function for social media rows.
  */
-function contact_info_social_media_callback($form, &$form_state) {
-  return $form['contact_info']['social_media'];
+function contact_info_social_callback($form, &$form_state) {
+  return $form['contact_info']['social'];
 }
 
 /**
  * Submit function for adding additional social media rows.
  */
-function contact_info_add_social_media($form, &$form_state) {
-  $form_state['social_media_rows']++;
+function contact_info_add_social($form, &$form_state) {
+  $form_state['social_rows'] ++;
   $form_state['rebuild'] = TRUE;
 }
 
 /**
  * Submit function for removing additional social media rows.
  */
-function contact_info_remove_social_media($form, &$form_state) {
-  $form_state['social_media_rows']--;
+function contact_info_remove_social($form, &$form_state) {
+  $form_state['social_rows'] --;
   $form_state['rebuild'] = TRUE;
 }
 
 /**
  * Theme function to render draggable table.
  */
-function theme_contact_info_social_media_draggable_table($variables) {
+function theme_contact_info_social_draggable_table($variables) {
   $form = $variables['form'];
-  
+
   // Initialize the variable which will store our table rows.
   $rows = array();
 
@@ -226,7 +247,7 @@ function theme_contact_info_social_media_draggable_table($variables) {
 
     // Add a weight class. Featherweight...
     $form[$key]['weight']['#attributes']['class'] = array('item-row-weight');
-    
+
     // Build out the table rows.
     $rows[] = array(
       'data' => array(
@@ -246,7 +267,7 @@ function theme_contact_info_social_media_draggable_table($variables) {
 
   // Declare table id.
   $table_id = 'items-table';
-  
+
   // Put the table together.
   $output = theme('table', array(
     'header' => $header,

@@ -1,8 +1,9 @@
 <?php
+
 /**
-* @file
-* Contact info module that provides blocks and tokens.
-*/
+ * @file
+ * Contact info module that provides blocks and tokens.
+ */
 
 /**
  * Implements hook_menu().
@@ -24,7 +25,7 @@ function contact_info_menu() {
  */
 function contact_info_permission() {
   return array(
-    'modify contact info' =>  array(
+    'modify contact info' => array(
       'title' => t('Modify contact information'),
       'description' => t('Modify contact and social media information.'),
     ),
@@ -36,11 +37,11 @@ function contact_info_permission() {
  */
 function contact_info_theme() {
   return array(
-    'contact_info_social_media_draggable_table' => array(
+    'contact_info_social_draggable_table' => array(
       'render element' => 'form',
       'file' => 'includes/contact_info.admin.inc',
     ),
-    'contact_info_address' => array(
+    'address' => array(
       'variables' => array(
         'country_name' => NULL,
         'legal_name' => NULL,
@@ -48,10 +49,8 @@ function contact_info_theme() {
         'locality' => NULL,
         'region' => NULL,
         'postal_code' => NULL,
-        'phone' => NULL,
-        'fax' => NULL,
       ),
-      'template' => 'contact_info_address',
+      'template' => 'address',
     ),
   );
 }
@@ -61,58 +60,10 @@ function contact_info_theme() {
  */
 function contact_info_preprocess(&$variables, $hook) {
   switch ($hook) {
-    case 'contact_info_address':
+    case 'address':
       // Any preprocessing should go here.
       break;
   }
-}
-
-/**
- * Implements hook_token_info().
- */
-function contact_info_token_info() {
-  $info = array();
-  // Define new token type.
-  $info['types']['contact_info'] = array(
-    'name' => t('Contact info'),
-    'description' => t('A token type that provides data from the contact info module.'),
-  );
-  // Define new tokens.
-  $info['tokens']['contact_info']['contact_info_address'] = array(
-    'name' => t('Address'),
-    'description' => t('A token containing the address entered in the contact info form.'),
-  );
-  $info['tokens']['contact_info']['contact_info_phone'] = array(
-    'name' => t('Phone'),
-    'description' => t('A token containing the phone number entered in the contact info form.'),
-  );
-
-  return $info;
-}
-
-/**
- * Implements hook_tokens().
- */
-function contact_info_tokens($type, $tokens, array $data = array(), array $options = array()) {
-  // Grab contact info data
-  $contact_info = variable_get('contact_info', '');
-
-  $replacements = array();
-
-  if ($type == 'contact_info') {
-    // Loop through available tokens.
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
-        case 'contact_info_address':
-          $replacements[$original] = $contact_info['contact_address'];
-          break;
-        case 'contact_info_phone':
-          $replacements[$original] = $contact_info['contact_phone']['number'];
-      }
-    }
-  }
-
-  return $replacements;
 }
 
 /**
@@ -120,29 +71,34 @@ function contact_info_tokens($type, $tokens, array $data = array(), array $optio
  */
 function contact_info_contextual_links_view_alter(&$element, &$items) {
   // Contextual link to edit contact info.
-  if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == 'contact_info_block') {
-    $element['#links']['edit-content'] = array(
-      'title' => 'Edit contact info',
-      'href' => url('admin/content/contact-info', array(
-        'absolute' => TRUE,
-        'query' => array(
-          'destination' => current_path(),
-        ),
-      )),
-    );
-  }
-  // Contextual link to edit social media links.
-  if (isset($element['#element']['#block']) && $element['#element']['#block']->delta == 'social_media_block') {
-    $element['#links']['edit-content'] = array(
-      'title' => 'Edit social media links',
-      'href' => url('admin/content/contact-info', array(
-        'fragment' => 'contact-info-social-media-wrapper',
-        'absolute' => TRUE,
-        'query' => array(
-          'destination' => current_path(),
-        ),
-      )),
-    );
+  if (isset($element['#element']['#block'])) {
+    switch ($element['#element']['#block']->delta) {
+      case 'address':
+      case 'phone':
+      case 'fax':
+        $element['#links']['edit-content'] = array(
+          'title' => 'Edit contact info',
+          'href' => url('admin/content/contact-info', array(
+            'absolute' => TRUE,
+            'query' => array(
+              'destination' => current_path(),
+            ),
+          )),
+        );
+        break;
+      case 'social':
+        $element['#links']['edit-content'] = array(
+          'title' => 'Edit social media links',
+          'href' => url('admin/content/contact-info', array(
+            'fragment' => 'contact-info-social-media-wrapper',
+            'absolute' => TRUE,
+            'query' => array(
+              'destination' => current_path(),
+            ),
+          )),
+        );
+        break;
+    }
   }
 }
 
@@ -150,12 +106,17 @@ function contact_info_contextual_links_view_alter(&$element, &$items) {
  * Implements hook_block_info().
  */
 function contact_info_block_info() {
-  $blocks['contact_info_block'] = array(
-    'info' => t('Contact info block'),
+  $blocks['address'] = array(
+    'info' => t('Address'),
   );
-
-  $blocks['social_media_block'] = array(
-    'info' => t('Social media block'),
+  $blocks['phone'] = array(
+    'info' => t('Phone number'),
+  );
+  $blocks['fax'] = array(
+    'info' => t('Fax number'),
+  );
+  $blocks['social'] = array(
+    'info' => t('Social links'),
   );
 
   return $blocks;
@@ -168,11 +129,17 @@ function contact_info_block_view($delta = '') {
   $block = array();
 
   switch ($delta) {
-    case 'contact_info_block':
-      $block['content'] = contact_info_block_content();
+    case 'address':
+      $block['content'] = contact_info_address_block();
       break;
-    case 'social_media_block':
-      $block['content'] = social_media_block_content();
+    case 'phone':
+      $block['content'] = contact_info_phone_block();
+      break;
+    case 'fax':
+      $block['content'] = contact_info_fax_block();
+      break;
+    case 'social':
+      $block['content'] = contact_info_social_block();
       break;
   }
 
@@ -180,81 +147,92 @@ function contact_info_block_view($delta = '') {
 }
 
 /**
- * Content for contact info block.
+ * Content for address block.
  */
-function contact_info_block_content() {
+function contact_info_address_block() {
   // Grab contact info data.
   $contact_info = variable_get('contact_info', '');
-  
+
   // Set up variables to send to the theme function.
   $variables = array();
-  
+  foreach ($contact_info['address'] as $key => $value) {
+    if (isset($value) && strlen($value)) {
+      $variables[$key] = check_plain($value);
+    }
+  }
+
+  $output = theme('address', $variables);
+  return $output;
+}
+
+/**
+ * Content for phone number block.
+ */
+function contact_info_phone_block() {
+  // Grab contact info data.
+  $contact_info = variable_get('contact_info', '');
+
   // Phone.
-  $phone = $contact_info['contact_phone'];
+  $phone = $contact_info['phone'];
   if (isset($phone['number']) && $phone['number']) {
     if (!isset($phone['label']) || !strlen($phone['label'])) {
       $phone['label'] = 'Phone';
     }
-    
+
     if (!isset($phone['country_code']) && !strlen($phone['country_code'])) {
       $phone['country_code'] = '1';
     }
 
-    $phone['machine'] = preg_replace('/[^0-9]/', '', $contact_info['contact_phone']['number']);
-    $variables['phone'] = check_plain($phone['label']) . ': ' .  
-      l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
-        'attributes' => array(
-          'itemprop' => 'telephone',
-          'class' => array('telephone'),
-        ),
-      ));
+    $phone['machine'] = preg_replace('/[^0-9]/', '', $contact_info['phone']['number']);
+    return check_plain($phone['label']) . ': ' .
+        l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
+          'attributes' => array(
+            'itemprop' => 'telephone',
+            'class' => array('telephone'),
+          ),
+    ));
   }
-  
-  // Fax.
-  $fax = $contact_info['contact_fax'];
+  else {
+    return FALSE;
+  }
+}
+
+/**
+ * Content for fax number block.
+ */
+function contact_info_fax_block() {
+  // Grab contact info data.
+  $contact_info = variable_get('contact_info', '');
+
+  $fax = $contact_info['fax'];
   if (isset($fax['number']) && $fax['number']) {
     if (!isset($fax['label']) || !strlen($fax['label'])) {
       $fax['label'] = 'Fax';
     }
 
-    $variables['fax'] = check_plain($fax['label']) . ': ' . 
-      '<span itemprop="faxNumber">' . check_plain($fax['number']) . '</span>';
+    return check_plain($fax['label']) . ': ' .
+        '<span itemprop="faxNumber">' . check_plain($fax['number']) . '</span>';
   }
-  
-  // Address.
-  $mappings = array(
-    'country-name' => 'country_name',
-    'legalName' => 'legal_name',
-    'street-address' => 'street_address',
-    'locality' => 'locality',
-    'region' => 'region',
-    'postal-code' => 'postal_code',
-  );
-  foreach ($contact_info['contact_address'] as $key => $value) {
-    if (isset($value) && strlen($value)) {
-      $variables[$mappings[$key]] = check_plain($value);
-    }
+  else {
+    return FALSE;
   }
-
-  $output = theme('contact_info_address', $variables);
-  return $output;
 }
 
 /**
- * Content for social media block.
+ * Content for social block.
  */
-function social_media_block_content() {
+function contact_info_social_block() {
   $data = array();
 
   $contact_info = variable_get('contact_info', '');
 
   // Structure data for output.
-  foreach ($contact_info['social_media']['table'] as $key => $social_media_site) {
-    if ($social_media_site && $social_media_site['enable']) {
+  foreach ($contact_info['social']['table'] as $key => $social_site) {
+    if ($social_site && $social_site['enable']) {
       $data[$key] = array(
-        'url' => $social_media_site['url'],
-        'weight' => $social_media_site['weight'],
-        'name' => $social_media_site['name'],
+        'url' => $social_site['url'],
+        'weight' => $social_site['weight'],
+        'name' => $social_site['name'],
       );
     }
   }
@@ -267,16 +245,16 @@ function social_media_block_content() {
   // Build render array to output social media links.
   if ($data) {
     // Start building out social media stuffs.
-    $output['social_media'] = array(
+    $output['social'] = array(
       '#prefix' => '<div class="social">',
       '#suffix' => '</div>',
     );
 
-    foreach ($data as $social_media_site_key => $social_media_site) {
-      $output['social_media'][$social_media_site_key] = array(
+    foreach ($data as $social_site_key => $social_site) {
+      $output['social'][$social_site_key] = array(
         '#theme' => 'link',
-        '#text' => $social_media_site['name'],
-        '#path' => $social_media_site['url'],
+        '#text' => $social_site['name'],
+        '#path' => $social_site['url'],
         '#options' => array(
           'html' => TRUE,
           'attributes' => array(),

@@ -25,10 +25,3 @@
   <span class="element-invisible" itemprop="addressCountry"><?php print $country_name; ?></span>
   <?php endif; ?>
 </address>
-<?php if($phone): ?>
-  <?php print $phone; ?>
-<?php endif; ?>
-<?php if($fax): ?>
-  <br />
-  <?php print $fax; ?>
-<?php endif; ?>
