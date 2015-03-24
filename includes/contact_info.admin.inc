@@ -58,12 +58,6 @@ function contact_info_setup($form, &$form_state) {
     '#title' => t('Phone'),
     '#collapsible' => TRUE,
   );
-  $form['contact_info']['phone']['label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Label'),
-    '#description' => t('Optionally, provide a label for the phone field.'),
-    '#default_value' => isset($contact_info['phone']['label']) ? $contact_info['phone']['label'] : '',
-  );
   $form['contact_info']['phone']['country_code'] = array(
     '#type' => 'textfield',
     '#title' => t('Country code'),
@@ -81,12 +75,6 @@ function contact_info_setup($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Fax'),
     '#collapsible' => TRUE,
-  );
-  $form['contact_info']['fax']['label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Label'),
-    '#description' => t('Optionally, provide a label for the fax field.'),
-    '#default_value' => isset($contact_info['fax']['label']) ? $contact_info['fax']['label'] : '',
   );
   $form['contact_info']['fax']['number'] = array(
     '#type' => 'textfield',

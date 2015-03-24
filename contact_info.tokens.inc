@@ -44,21 +44,27 @@ function contact_info_token_info() {
   );
   $info['tokens']['address']['country_name'] = array(
     'name' => t('Country name'),
+    'description' => t('The country name of the address.'),
   );
   $info['tokens']['address']['legal_name'] = array(
     'name' => t('Legal name'),
+    'description' => t('The legal name of the address.'),
   );
   $info['tokens']['address']['street_address'] = array(
     'name' => t('Street address'),
+    'description' => t('The street address of the address.'),
   );
   $info['tokens']['address']['locality'] = array(
     'name' => t('Locality'),
+    'description' => t('The locality of the address.'),
   );
   $info['tokens']['address']['region'] = array(
     'name' => t('Region'),
+    'description' => t('The region of the address.'),
   );
   $info['tokens']['address']['postal_code'] = array(
     'name' => t('Postal code'),
+    'description' => t('The postal code of the address.'),
   );
   
   $info['tokens']['contact_info']['phone'] = array(
@@ -68,12 +74,15 @@ function contact_info_token_info() {
   );
   $info['tokens']['phone']['label'] = array(
     'name' => t('Label'),
+    'description' => t('The label of the phone number.'),
   );
   $info['tokens']['phone']['country_code'] = array(
     'name' => t('Country code'),
+    'description' => t('The country code of the phone number.'),
   );
   $info['tokens']['phone']['number'] = array(
     'name' => t('Number'),
+    'description' => t('The number of the phone number.'),
   );
   
   $info['tokens']['contact_info']['fax'] = array(
@@ -83,9 +92,11 @@ function contact_info_token_info() {
   );
   $info['tokens']['fax']['label'] = array(
     'name' => t('Label'),
+    'description' => t('The label of the fax number.'),
   );
   $info['tokens']['fax']['number'] = array(
     'name' => t('Number'),
+    'description' => t('The number of the fax number.'),
   );
   
   $info['tokens']['contact_info']['social_seo'] = array(
@@ -95,9 +106,11 @@ function contact_info_token_info() {
   );
   $info['tokens']['social_seo']['site_twitter'] = array(
     'name' => t('Site Twitter'),
+    'description' => t('The site twitter handle.'),
   );
   $info['tokens']['social_seo']['site_google_plus'] = array(
     'name' => t('Site Google+'),
+    'description' => t('The site Google+ URL.'),
   );
   
   $info['tokens']['contact_info']['social'] = array(

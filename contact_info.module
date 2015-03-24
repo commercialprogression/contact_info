@@ -126,16 +126,18 @@ function contact_info_block_info() {
  * Implements hook_block_view().
  */
 function contact_info_block_view($delta = '') {
-  $block = array();
+  $block = array('subject' => NULL, 'content' => NULL);
 
   switch ($delta) {
     case 'address':
       $block['content'] = contact_info_address_block();
       break;
     case 'phone':
+      $block['subject'] = t('Phone');
       $block['content'] = contact_info_phone_block();
       break;
     case 'fax':
+      $block['subject'] = t('Fax');
       $block['content'] = contact_info_fax_block();
       break;
     case 'social':
@@ -175,21 +177,16 @@ function contact_info_phone_block() {
   // Phone.
   $phone = $contact_info['phone'];
   if (isset($phone['number']) && $phone['number']) {
-    if (!isset($phone['label']) || !strlen($phone['label'])) {
-      $phone['label'] = 'Phone';
-    }
-
     if (!isset($phone['country_code']) && !strlen($phone['country_code'])) {
       $phone['country_code'] = '1';
     }
 
     $phone['machine'] = preg_replace('/[^0-9]/', '', $contact_info['phone']['number']);
-    return check_plain($phone['label']) . ': ' .
-        l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
-          'attributes' => array(
-            'itemprop' => 'telephone',
-            'class' => array('telephone'),
-          ),
+    return l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
+      'attributes' => array(
+        'itemprop' => 'telephone',
+        'class' => array('telephone'),
+      ),
     ));
   }
   else {
@@ -206,12 +203,7 @@ function contact_info_fax_block() {
 
   $fax = $contact_info['fax'];
   if (isset($fax['number']) && $fax['number']) {
-    if (!isset($fax['label']) || !strlen($fax['label'])) {
-      $fax['label'] = 'Fax';
-    }
-
-    return check_plain($fax['label']) . ': ' .
-        '<span itemprop="faxNumber">' . check_plain($fax['number']) . '</span>';
+    return '<span itemprop="faxNumber">' . check_plain($fax['number']) . '</span>';
   }
   else {
     return FALSE;
