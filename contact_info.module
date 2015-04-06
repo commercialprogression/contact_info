@@ -46,6 +46,7 @@ function contact_info_theme() {
         'country_name' => NULL,
         'legal_name' => NULL,
         'street_address' => NULL,
+        'street_address_2' => NULL,
         'locality' => NULL,
         'region' => NULL,
         'postal_code' => NULL,
@@ -109,6 +110,9 @@ function contact_info_block_info() {
   $blocks['address'] = array(
     'info' => t('Address'),
   );
+  $blocks['address2'] = array(
+    'info' => t('Address 2'),
+  );
   $blocks['phone'] = array(
     'info' => t('Phone number'),
   );
@@ -131,6 +135,9 @@ function contact_info_block_view($delta = '') {
   switch ($delta) {
     case 'address':
       $block['content'] = contact_info_address_block();
+      break;
+    case 'address2':
+      $block['content'] = contact_info_address2_block();
       break;
     case 'phone':
       $block['subject'] = t('Phone');
@@ -164,6 +171,25 @@ function contact_info_address_block() {
   }
 
   $output = theme('address', $variables);
+  return $output;
+}
+
+/**
+ * Content for address2 block.
+ */
+function contact_info_address2_block() {
+  // Grab contact info data.
+  $contact_info = variable_get('contact_info', '');
+
+  // Set up variables to send to the theme function.
+  $variables = array();
+  foreach ($contact_info['address2'] as $key => $value) {
+    if (isset($value) && strlen($value)) {
+      $variables[$key] = check_plain($value);
+    }
+  }
+
+  $output = theme('address2', $variables);
   return $output;
 }
 

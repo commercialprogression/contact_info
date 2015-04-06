@@ -34,6 +34,11 @@ function contact_info_setup($form, &$form_state) {
     '#default_value' => isset($contact_info['address']['street_address']) ? $contact_info['address']['street_address'] : '',
     '#title' => t('Street address'),
   );
+  $form['contact_info']['address']['street_address_2'] = array(
+    '#type' => 'textfield',
+    '#default_value' => isset($contact_info['address']['street_address_2']) ? $contact_info['address']['street_address_2'] : '',
+    '#title' => t('Street address 2'),
+  );
   $form['contact_info']['address']['locality'] = array(
     '#type' => 'textfield',
     '#default_value' => isset($contact_info['address']['locality']) ? $contact_info['address']['locality'] : '',

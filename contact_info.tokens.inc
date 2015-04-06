@@ -20,6 +20,11 @@ function contact_info_token_info() {
     'description' => t('Address from the contact info module.'),
     'needs-data' => 'address',
   );
+  $info['types']['address2'] = array(
+    'name' => t('Address2'),
+    'description' => t('Address2 from the contact info module.'),
+    'needs-data' => 'address2',
+  );
   $info['types']['phone'] = array(
     'name' => t('Phone'),
     'description' => t('Phone from the contact info module.'),
