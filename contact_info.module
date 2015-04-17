@@ -110,6 +110,9 @@ function contact_info_block_info() {
   $blocks['address'] = array(
     'info' => t('Address'),
   );
+  $blocks['map'] = array(
+    'info' => t('Map/directions'),
+  );
   $blocks['phone'] = array(
     'info' => t('Phone number'),
   );
@@ -132,6 +135,9 @@ function contact_info_block_view($delta = '') {
   switch ($delta) {
     case 'address':
       $block['content'] = contact_info_address_block();
+      break;
+    case 'map':
+      $block['content'] = contact_info_map_block();
       break;
     case 'phone':
       $block['subject'] = t('Phone');
@@ -165,6 +171,37 @@ function contact_info_address_block() {
   }
 
   $output = theme('address', $variables);
+  return $output;
+}
+
+/**
+ * Content for map block.
+ * @TODO: Configuration options.
+ */
+function contact_info_map_block() {
+  // Grab contact info data.
+  $contact_info = variable_get('contact_info', '');
+  $api_key = 'AIzaSyAkkBDnKYln9G2v8PLIFUiUUmqyyiZ4uxw';
+  $output = NULL;
+
+  if (isset($contact_info['address'])) {
+    // Construct an address string.
+    $address = $contact_info['address'];
+    $address_string = $address['street_address'] . ', ';
+    if (strlen($address['street_address_2'])) {
+      $address_string .= $address['street_address_2'] . ', ';
+    }
+    $address_string .= $address['locality'] . ', ';
+    $address_string .= $address['region'] . ' ';
+    $address_string .= $address['postal_code'] . ', ';
+    $address_string .= $address['country_name'];
+
+    $output = '<iframe width="600" height="450" frameborder="0" ';
+    $output .= 'style="border:0" src="https://www.google.com/maps/embed/v1/place?key=';
+    $output .= $api_key . '&amp;q=' . rawurlencode($address_string);
+    $output .= '"></iframe>';
+  }
+
   return $output;
 }
 
