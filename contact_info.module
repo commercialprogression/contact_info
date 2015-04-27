@@ -156,6 +156,62 @@ function contact_info_block_view($delta = '') {
 }
 
 /**
+ * Implements hook_block_configure().
+ */
+function contact_info_block_configure($delta = '') {
+  $form = array();
+
+  // Configuration form for map/directions block.
+  if ($delta == 'map') {
+    $map_data = variable_get('contact_info_map', '');
+
+    $form['api_key'] = array(
+      '#title' => t('Google API key'),
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#default_value' => isset($map_data['api_key']) ? $map_data['api_key'] : '',
+    );
+
+    $form['dimensions'] = array(
+      '#title' => t('Dimensions'),
+      '#type' => 'fieldset',
+    );
+
+    $form['dimensions']['width'] = array(
+      '#title' => t('Width'),
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#default_value' => isset($map_data['width']) ? $map_data['width'] : '600',
+    );
+
+    $form['dimensions']['height'] = array(
+      '#title' => t('Height'),
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#default_value' => isset($map_data['height']) ? $map_data['height'] : '450',
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function contact_info_block_save($delta = '', $edit = array()) {
+  if ($delta == 'map') {
+    // Structure values to save into contact info array.
+    $values = array(
+      'api_key' => $edit['api_key'],
+      'width' => $edit['width'],
+      'height' => $edit['height'],
+    );
+
+    variable_set('contact_info_map', $values);
+  }
+}
+
+/**
  * Content for address block.
  */
 function contact_info_address_block() {
@@ -176,13 +232,19 @@ function contact_info_address_block() {
 
 /**
  * Content for map block.
- * @TODO: Configuration options.
  */
 function contact_info_map_block() {
   // Grab contact info data.
   $contact_info = variable_get('contact_info', '');
-  $api_key = 'AIzaSyAkkBDnKYln9G2v8PLIFUiUUmqyyiZ4uxw';
+  $map_settings = variable_get('contact_info_map', '');
+
   $output = NULL;
+
+  // Check to see if an API key exists.
+  if (!isset($map_settings['api_key'])) {
+    drupal_set_message(t('Please provide a Google API key for the embedded map to work properly'), 'warning');
+    return $output;
+  }
 
   if (isset($contact_info['address'])) {
     // Construct an address string.
@@ -196,9 +258,9 @@ function contact_info_map_block() {
     $address_string .= $address['postal_code'] . ', ';
     $address_string .= $address['country_name'];
 
-    $output = '<iframe width="600" height="450" frameborder="0" ';
+    $output = '<iframe width="' . $map_settings['width'] . '" height="' . $map_settings['height'] . '" frameborder="0" ';
     $output .= 'style="border:0" src="https://www.google.com/maps/embed/v1/place?key=';
-    $output .= $api_key . '&amp;q=' . rawurlencode($address_string);
+    $output .= $map_settings['api_key'] . '&amp;q=' . rawurlencode($address_string);
     $output .= '"></iframe>';
   }
 
