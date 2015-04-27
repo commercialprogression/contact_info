@@ -169,7 +169,7 @@ function contact_info_block_configure($delta = '') {
       '#title' => t('Google API key'),
       '#type' => 'textfield',
       '#required' => TRUE,
-      '#default_value' => isset($map_data['api_key']) ? $map_data['api_key'] : '',
+      '#default_value' => isset($map_data['api_key']) ? $map_data['api_key'] : 'AIzaSyAkkBDnKYln9G2v8PLIFUiUUmqyyiZ4uxw',
     );
 
     $form['dimensions'] = array(
