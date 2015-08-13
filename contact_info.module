@@ -249,18 +249,17 @@ function contact_info_map_block() {
   if (isset($contact_info['address'])) {
     // Construct an address string.
     $address = $contact_info['address'];
-    $address_string = $address['street_address'] . ', ';
+    $address_string = $address['street_address'] . ' ';
     if (strlen($address['street_address_2'])) {
-      $address_string .= $address['street_address_2'] . ', ';
+      $address_string .= $address['street_address_2'] . ' ';
     }
-    $address_string .= $address['locality'] . ', ';
+    $address_string .= $address['locality'] . ' ';
     $address_string .= $address['region'] . ' ';
-    $address_string .= $address['postal_code'] . ', ';
-    $address_string .= $address['country_name'];
+    $address_string .= $address['postal_code'] . ' ';
 
     $output = '<iframe width="' . $map_settings['width'] . '" height="' . $map_settings['height'] . '" frameborder="0" ';
     $output .= 'style="border:0" src="https://www.google.com/maps/embed/v1/place?key=';
-    $output .= $map_settings['api_key'] . '&amp;q=' . rawurlencode($address_string);
+    $output .= $map_settings['api_key'] . '&amp;q=' . urlencode(str_replace(' ', '+', $address_string));
     $output .= '"></iframe>';
   }
 

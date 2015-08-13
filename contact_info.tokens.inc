@@ -70,7 +70,7 @@ function contact_info_token_info() {
     'name' => t('Postal code'),
     'description' => t('The postal code of the address.'),
   );
-  
+
   $info['tokens']['contact_info']['phone'] = array(
     'name' => t('Phone number'),
     'description' => t('The phone number entered in the contact info form.'),
@@ -88,7 +88,7 @@ function contact_info_token_info() {
     'name' => t('Number'),
     'description' => t('The number of the phone number.'),
   );
-  
+
   $info['tokens']['contact_info']['fax'] = array(
     'name' => t('Fax number'),
     'description' => t('The fax number entered in the contact info form.'),
@@ -102,7 +102,7 @@ function contact_info_token_info() {
     'name' => t('Number'),
     'description' => t('The number of the fax number.'),
   );
-  
+
   $info['tokens']['contact_info']['social_seo'] = array(
     'name' => t('Social SEO'),
     'description' => t('The social info useful for metatag and elsewhere.'),
@@ -116,10 +116,15 @@ function contact_info_token_info() {
     'name' => t('Site Google+'),
     'description' => t('The site Google+ URL.'),
   );
-  
+
   $info['tokens']['contact_info']['social'] = array(
     'name' => t('Social links'),
     'description' => t('The social links entered in the contact info form.'),
+  );
+
+  $info['tokens']['contact_info']['map'] = array(
+    'name' => t('Map'),
+    'description' => t('Google map embed.'),
   );
 
   return $info;
@@ -151,8 +156,12 @@ function contact_info_tokens($type, $tokens, array $data = array(), array $optio
           $replacements[$original] = print_r($contact_info['social_seo'], TRUE);
           break;
         case 'social':
-          $replacements[$original] = render(contact_info_social_block());
+          $social_block = contact_info_social_block();
+          $replacements[$original] = render($social_block);
           break;
+        case 'map':
+          $map = contact_info_map_block();
+          $replacements[$original] = render($map);
       }
     }
     $addresses = token_find_with_prefix($tokens, 'address');
