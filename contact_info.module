@@ -259,7 +259,7 @@ function contact_info_map_block() {
 
     $output = '<iframe width="' . $map_settings['width'] . '" height="' . $map_settings['height'] . '" frameborder="0" ';
     $output .= 'style="border:0" src="https://www.google.com/maps/embed/v1/place?key=';
-    $output .= $map_settings['api_key'] . '&amp;q=' . urlencode(str_replace(' ', '+', $address_string));
+    $output .= $map_settings['api_key'] . '&q=' . urlencode(str_replace(' ', '+', $address_string));
     $output .= '"></iframe>';
   }
 
@@ -280,7 +280,7 @@ function contact_info_phone_block() {
       $phone['country_code'] = '1';
     }
 
-    $phone['machine'] = preg_replace('/[^0-9]/', '', $contact_info['phone']['number']);
+    $phone['machine'] = _contact_info_string_to_number($contact_info['phone']['number']);
     return l($phone['number'], 'tel:+' . $phone['country_code'] . $phone['machine'], array(
       'attributes' => array(
         'itemprop' => 'telephone',
@@ -363,5 +363,64 @@ function contact_info_social_block() {
 function contact_info_sort_weight($a, $b) {
   if (isset($a['weight']) && isset($b['weight'])) {
     return ($a['weight'] - $b['weight']);
+  }
+}
+
+/**
+ *
+ */
+function _contact_info_string_to_number($string) {
+  $array = str_split($string);
+
+  foreach ($array as $key => $letter) {
+    $array[$key] = _contact_info_letter_strip($letter);
+  }
+
+  return implode('', $array);
+}
+
+/**
+ *
+ */
+function _contact_info_letter_strip($letter) {
+  $map = array(
+    'A' => 2,
+    'B' => 2,
+    'C' => 2,
+    'D' => 3,
+    'E' => 3,
+    'F' => 3,
+    'G' => 4,
+    'H' => 4,
+    'I' => 4,
+    'J' => 5,
+    'K' => 5,
+    'L' => 5,
+    'M' => 6,
+    'N' => 6,
+    'O' => 6,
+    'P' => 7,
+    'Q' => 7,
+    'R' => 7,
+    'S' => 7,
+    'T' => 8,
+    'U' => 8,
+    'V' => 8,
+    'W' => 9,
+    'X' => 9,
+    'Y' => 9,
+    'Z' => 9,
+  );
+
+  $letter = strtoupper($letter);
+
+  if (array_key_exists($letter, $map)) {
+    return $map[$letter];
+  }
+  elseif (is_numeric($letter)) {
+    return $letter;
+  }
+  else {
+    return '';
   }
 }
