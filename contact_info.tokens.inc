@@ -1,4 +1,6 @@
 <?php
+use Drupal\contact_info\Plugin\Block;
+use Drupal\Core\Render\RendererInterface;
 
 /**
  * @file
@@ -133,52 +135,52 @@ function contact_info_token_info() {
 /**
  * Implements hook_tokens().
  */
-function contact_info_tokens($type, $tokens, array $data = array(), array $options = array()) {
-  // Grab contact info data
-  $contact_info = variable_get('contact_info', '');
-
+function contact_info_tokens($type, $tokens, array $data, array $options, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
   $replacements = array();
 
   if ($type == 'contact_info') {
+    // Grab contact info data
+    $contact_info = \Drupal::config('contact_info.setup');
     // Loop through available tokens.
     foreach ($tokens as $name => $original) {
+      $renderer = \Drupal::service('renderer');
       switch ($name) {
         case 'address':
-          $replacements[$original] = contact_info_address_block();
+          $replacements[$original] = $renderer->render(contact_info_create_address($contact_info));
           break;
         case 'phone':
-          $replacements[$original] = contact_info_phone_block();
+          $replacements[$original] = $renderer->render(contact_info_create_phone($contact_info));
           break;
         case 'fax':
-          $replacements[$original] = contact_info_fax_block();
+          $replacements[$original] = $renderer->render(contact_info_create_fax($contact_info));
           break;
         case 'social_seo':
-          $replacements[$original] = print_r($contact_info['social_seo'], TRUE);
+          $replacements[$original] = print_r($contact_info->get('social_seo'), TRUE);
           break;
         case 'social':
-          $social_block = contact_info_social_block();
-          $replacements[$original] = render($social_block);
+          $social_block = contact_info_create_social($contact_info);
+          $replacements[$original] = $renderer->render($social_block);
           break;
         case 'map':
-          $map = contact_info_map_block();
-          $replacements[$original] = render($map);
+          $map = contact_info_create_map($contact_info);
+          $replacements[$original] = $renderer->render($map);
       }
     }
-    $addresses = token_find_with_prefix($tokens, 'address');
+    $addresses = \Drupal::token()->findWithPrefix($tokens, 'address');
     foreach ($addresses as $name => $original) {
-      $replacements[$original] = $contact_info['address'][$name];
+      $replacements[$original] = $contact_info->get('address')[$name];
     }
-    $phones = token_find_with_prefix($tokens, 'phone');
+    $phones = \Drupal::token()->findWithPrefix($tokens, 'phone');
     foreach ($phones as $name => $original) {
-      $replacements[$original] = $contact_info['phone'][$name];
+      $replacements[$original] = $contact_info->get('phone')[$name];
     }
-    $faxes = token_find_with_prefix($tokens, 'fax');
+    $faxes = \Drupal::token()->findWithPrefix($tokens, 'fax');
     foreach ($faxes as $name => $original) {
-      $replacements[$original] = $contact_info['fax'][$name];
+      $replacements[$original] = $contact_info->get('fax')[$name];
     }
-    $social_seos = token_find_with_prefix($tokens, 'social_seo');
+    $social_seos = \Drupal::token()->findWithPrefix($tokens, 'social_seo');
     foreach ($social_seos as $name => $original) {
-      $replacements[$original] = $contact_info['social_seo'][$name];
+      $replacements[$original] = $contact_info->get('social_seo')[$name];
     }
   }
 

@@ -1,5 +1,0 @@
-name = Contact info
-description = Contact info module for Drupal 7 that provides blocks and tokens.
-core = 7.x
-files[] = contact_info.module
-files[] = contact_info.tokens.inc
