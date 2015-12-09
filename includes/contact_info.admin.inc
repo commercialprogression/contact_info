@@ -1,11 +1,16 @@
 <?php
 
 /**
+ * @file
+ * Contains the admin form.
+ */
+
+/**
  * Callback function for social media block setup.
  */
 function contact_info_setup($form, &$form_state) {
 
-  // Load existing contact info
+  // Load existing contact info.
   $contact_info = variable_get('contact_info', '');
 
   // Make that form a tree.
@@ -49,7 +54,7 @@ function contact_info_setup($form, &$form_state) {
     '#type' => 'textfield',
     '#default_value' => isset($contact_info['address']['region']) ? $contact_info['address']['region'] : '',
     '#title' => t('Region'),
-    '#description' => t('For instance, MI if you\'re located in Michigan'),
+    '#description' => t("For instance, MI if you're located in Michigan"),
   );
   $form['contact_info']['address']['postal_code'] = array(
     '#type' => 'textfield',
@@ -103,10 +108,9 @@ function contact_info_setup($form, &$form_state) {
   $form['contact_info']['social_seo']['site_google_plus'] = array(
     '#type' => 'textfield',
     '#title' => t('Google+ Page'),
-    '#description' => t('URL to site\'s Google+ page, like https://plus.google.com/103212176392756352243/'),
+    '#description' => t("URL to site's Google+ page, like https://plus.google.com/103212176392756352243/"),
     '#default_value' => isset($contact_info['social_seo']['site_google_plus']) ? $contact_info['social_seo']['site_google_plus'] : '',
   );
-
 
   // Social media.
   $form['contact_info']['social'] = array(
@@ -140,7 +144,7 @@ function contact_info_setup($form, &$form_state) {
       '#suffix' => '</span>',
     );
 
-    // Add icon if any social media rows are present,
+    // Add icon if any social media rows are present,.
     if (isset($contact_info['social']['table'][$i]['url'])) {
       $form['contact_info']['social']['table'][$i]['icon']['link'] = array(
         '#markup' => l($contact_info['social']['table'][$i]['name'], $contact_info['social']['table'][$i]['url']),
@@ -202,7 +206,7 @@ function contact_info_social_callback($form, &$form_state) {
  * Submit function for adding additional social media rows.
  */
 function contact_info_add_social($form, &$form_state) {
-  $form_state['social_rows'] ++;
+  $form_state['social_rows']++;
   $form_state['rebuild'] = TRUE;
 }
 
@@ -210,7 +214,7 @@ function contact_info_add_social($form, &$form_state) {
  * Submit function for removing additional social media rows.
  */
 function contact_info_remove_social($form, &$form_state) {
-  $form_state['social_rows'] --;
+  $form_state['social_rows']--;
   $form_state['rebuild'] = TRUE;
 }
 

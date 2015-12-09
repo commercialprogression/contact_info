@@ -134,7 +134,7 @@ function contact_info_token_info() {
  * Implements hook_tokens().
  */
 function contact_info_tokens($type, $tokens, array $data = array(), array $options = array()) {
-  // Grab contact info data
+  // Grab contact info data.
   $contact_info = variable_get('contact_info', '');
 
   $replacements = array();
@@ -146,19 +146,24 @@ function contact_info_tokens($type, $tokens, array $data = array(), array $optio
         case 'address':
           $replacements[$original] = contact_info_address_block();
           break;
+
         case 'phone':
           $replacements[$original] = contact_info_phone_block();
           break;
+
         case 'fax':
           $replacements[$original] = contact_info_fax_block();
           break;
+
         case 'social_seo':
           $replacements[$original] = print_r($contact_info['social_seo'], TRUE);
           break;
+
         case 'social':
           $social_block = contact_info_social_block();
           $replacements[$original] = render($social_block);
           break;
+
         case 'map':
           $map = contact_info_map_block();
           $replacements[$original] = render($map);

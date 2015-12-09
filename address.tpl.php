@@ -10,8 +10,8 @@
   <span itemprop="legalName"><?php print $legal_name; ?></span><br />
   <?php endif; ?>
   <span itemprop="streetAddress">
-  <?php if ($street_address) print $street_address . '<br />'; ?>
-  <?php if ($street_address_2) print $street_address_2 . '<br />'; ?>
+  <?php if ($street_address) {print $street_address . '<br />';} ?>
+  <?php if ($street_address_2) {print $street_address_2 . '<br />';} ?>
   </span>
   <?php if ($locality): ?>
   <span itemprop="addressLocality"><?php print $locality; ?></span>, 
