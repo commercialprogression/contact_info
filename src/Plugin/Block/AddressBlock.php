@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Plugin\Block/AddressBlock.
+ */
+
 namespace Drupal\contact_info\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -26,4 +31,5 @@ class AddressBlock extends BlockBase {
 
     return $variables;
   }
+
 }

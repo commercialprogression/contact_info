@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Plugin\Block/MapBlock.
+ */
+
 namespace Drupal\contact_info\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -30,7 +35,7 @@ class MapBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
-    $form =  parent::blockForm($form, $form_state);
+    $form = parent::blockForm($form, $form_state);
 
     // Configuration form for map/directions block.
     $map_data = $this->getConfiguration();
@@ -69,7 +74,14 @@ class MapBlock extends BlockBase {
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['api_key'] = $form_state->getValue(array('api_key'));
-    $this->configuration['width'] = $form_state->getValue(array('dimensions', 'width'));
-    $this->configuration['height'] = $form_state->getValue(array('dimensions', 'height'));
+    $this->configuration['width'] = $form_state->getValue(array(
+      'dimensions',
+      'width',
+    ));
+    $this->configuration['height'] = $form_state->getValue(array(
+      'dimensions',
+      'height',
+    ));
   }
+
 }

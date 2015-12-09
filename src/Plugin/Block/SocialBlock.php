@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Plugin\Block/SocialBlock.
+ */
+
 namespace Drupal\contact_info\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -22,4 +27,5 @@ class SocialBlock extends BlockBase {
 
     return contact_info_create_social($contact_info);
   }
+
 }

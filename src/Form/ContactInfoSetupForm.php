@@ -1,15 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Form\ContactInfoSetupForm.
+ */
+
 namespace Drupal\contact_info\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\ConfigFormBase;
-
-/**
- * @file
- * Contains \Drupal\contact_info\Form\ContactInfoSetupForm.
- */
 
 /**
  * Configure custom settings for this site.
@@ -44,7 +44,7 @@ class ContactInfoSetupForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Load existing contact info
+    // Load existing contact info.
     $contact_info = \Drupal::config('contact_info.setup');
 
     // Make that form a tree.
@@ -88,7 +88,7 @@ class ContactInfoSetupForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#default_value' => $contact_info->get('address.region') ? $contact_info->get('address.region') : '',
       '#title' => t('Region'),
-      '#description' => t('For instance, MI if you\'re located in Michigan'),
+      '#description' => t("For instance, MI if you're located in Michigan"),
     );
     $form['contact_info']['address']['postal_code'] = array(
       '#type' => 'textfield',
@@ -145,14 +145,13 @@ class ContactInfoSetupForm extends ConfigFormBase {
     $form['contact_info']['social_seo']['site_google_plus'] = array(
       '#type' => 'textfield',
       '#title' => t('Google+ Page'),
-      '#description' => t('URL to site\'s Google+ page, like https://plus.google.com/103212176392756352243/'),
+      '#description' => t("URL to site's Google+ page, like https://plus.google.com/103212176392756352243/"),
       '#default_value' => $contact_info->get('social_seo.site_google_plus') ? $contact_info->get('social_seo.site_google_plus') : '',
     );
     $form['contact_info']['social_rows'] = array(
       '#type' => 'hidden',
       '#value' => count($contact_info->get('social.table')),
     );
-
 
     // Social media.
     $form['contact_info']['social'] = array(
@@ -174,20 +173,68 @@ class ContactInfoSetupForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('contact_info.setup')
-      ->set('address.country_name', $form_state->getValue(array('contact_info', 'address', 'country_name')))
-      ->set('address.legal_name', $form_state->getValue(array('contact_info', 'address', 'legal_name')))
-      ->set('address.street_address', $form_state->getValue(array('contact_info', 'address', 'street_address')))
-      ->set('address.street_address_2', $form_state->getValue(array('contact_info', 'address', 'street_address_2')))
-      ->set('address.locality', $form_state->getValue(array('contact_info', 'address', 'locality')))
-      ->set('address.region', $form_state->getValue(array('contact_info', 'address', 'region')))
-      ->set('address.postal_code', $form_state->getValue(array('contact_info', 'address', 'postal_code')))
-      ->set('phone.country_code', $form_state->getValue(array('contact_info', 'phone', 'country_code')))
-      ->set('phone.number', $form_state->getValue(array('contact_info', 'phone', 'number')))
-      ->set('fax.number', $form_state->getValue(array('contact_info', 'fax', 'number')))
-      ->set('social_seo.site_twitter', $form_state->getValue(array('contact_info', 'social_seo', 'site_twitter')))
-      ->set('social_seo.site_google_plus', $form_state->getValue(array('contact_info', 'social_seo', 'site_google_plus')));
+      ->set('address.country_name', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'country_name',
+      )))
+      ->set('address.legal_name', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'legal_name',
+      )))
+      ->set('address.street_address', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'street_address',
+      )))
+      ->set('address.street_address_2', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'street_address_2',
+      )))
+      ->set('address.locality', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'locality',
+      )))
+      ->set('address.region', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'region',
+      )))
+      ->set('address.postal_code', $form_state->getValue(array(
+        'contact_info',
+        'address',
+        'postal_code',
+      )))
+      ->set('phone.country_code', $form_state->getValue(array(
+        'contact_info',
+        'phone',
+        'country_code',
+      )))
+      ->set('phone.number', $form_state->getValue(array(
+        'contact_info',
+        'phone',
+        'number',
+      )))
+      ->set('fax.number', $form_state->getValue(array(
+        'contact_info',
+        'fax',
+        'number',
+      )))
+      ->set('social_seo.site_twitter', $form_state->getValue(array(
+        'contact_info',
+        'social_seo',
+        'site_twitter',
+      )))
+      ->set('social_seo.site_google_plus', $form_state->getValue(array(
+        'contact_info',
+        'social_seo',
+        'site_google_plus',
+      )));
 
-    foreach ($form_state->getValue('contact_info', 'social', 'table') as $key=>$value) {
+    foreach ($form_state->getValue(array('contact_info', 'social', 'table')) as $key => $value) {
       $this->config('contact_info.setup')->set($key, $value);
     }
 
@@ -201,4 +248,5 @@ class ContactInfoSetupForm extends ConfigFormBase {
   public static function socialRows($form, &$form_state) {
     return $form['contact_info']['social'];
   }
+
 }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Plugin\Block/FaxBlock.
+ */
+
 namespace Drupal\contact_info\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -23,4 +28,5 @@ class FaxBlock extends BlockBase {
 
     return contact_info_create_fax($contact_info);
   }
+
 }

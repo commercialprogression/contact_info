@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\contact_info\Plugin\Block/PhoneBlock.
+ */
+
 namespace Drupal\contact_info\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -23,4 +28,5 @@ class PhoneBlock extends BlockBase {
 
     return contact_info_create_phone($contact_info);
   }
+
 }
