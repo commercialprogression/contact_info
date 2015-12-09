@@ -1,5 +1,7 @@
 <?php
+
 namespace Drupal\contact_info\Plugin\Block;
+
 use Drupal\Core\Block\BlockBase;
 
 /**

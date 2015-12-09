@@ -1,6 +1,6 @@
 <?php
+
 use Drupal\contact_info\Plugin\Block;
-use Drupal\Core\Render\RendererInterface;
 
 /**
  * @file
@@ -12,7 +12,8 @@ use Drupal\Core\Render\RendererInterface;
  */
 function contact_info_token_info() {
 	$info = array();
-	// Define new token type.
+
+	// Define new token types.
 	$info['types']['contact_info'] = array(
 		'name' => t('Contact info'),
 		'description' => t('Data from the contact info module.'),
@@ -141,9 +142,9 @@ function contact_info_tokens($type, $tokens, array $data, array $options, \Drupa
 	if ($type == 'contact_info') {
 		// Grab contact info data
 		$contact_info = \Drupal::config('contact_info.setup');
+		$renderer = \Drupal::service('renderer');
 		// Loop through available tokens.
 		foreach ($tokens as $name => $original) {
-			$renderer = \Drupal::service('renderer');
 			switch ($name) {
 				case 'address':
 					$replacements[$original] = $renderer->render(contact_info_create_address($contact_info));
@@ -166,19 +167,25 @@ function contact_info_tokens($type, $tokens, array $data, array $options, \Drupa
 					$replacements[$original] = $renderer->render($map);
 			}
 		}
-		$addresses = \Drupal::token()->findWithPrefix($tokens, 'address');
+
+		// Chained tokens
+		$token_service = \Drupal::token();
+		$addresses = $token_service->findWithPrefix($tokens, 'address');
 		foreach ($addresses as $name => $original) {
 			$replacements[$original] = $contact_info->get('address')[$name];
 		}
-		$phones = \Drupal::token()->findWithPrefix($tokens, 'phone');
+
+		$phones = $token_service->findWithPrefix($tokens, 'phone');
 		foreach ($phones as $name => $original) {
 			$replacements[$original] = $contact_info->get('phone')[$name];
 		}
-		$faxes = \Drupal::token()->findWithPrefix($tokens, 'fax');
+
+		$faxes = $token_service->findWithPrefix($tokens, 'fax');
 		foreach ($faxes as $name => $original) {
 			$replacements[$original] = $contact_info->get('fax')[$name];
 		}
-		$social_seos = \Drupal::token()->findWithPrefix($tokens, 'social_seo');
+
+		$social_seos = $token_service->findWithPrefix($tokens, 'social_seo');
 		foreach ($social_seos as $name => $original) {
 			$replacements[$original] = $contact_info->get('social_seo')[$name];
 		}

@@ -1,8 +1,11 @@
 <?php
+
 namespace Drupal\contact_info\Form;
+
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\ConfigFormBase;
+
 /**
  * @file
  * Contains \Drupal\contact_info\Form\ContactInfoSetupForm.
