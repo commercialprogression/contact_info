@@ -17,7 +17,7 @@ use Drupal\Core\Form\ConfigFormBase;
 class ContactInfoSetupForm extends ConfigFormBase {
 
   /**
-   * Constructs a new ComproCustomSubmittedForm.
+   * Constructs a new ContactInfoSetupForm.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
@@ -244,6 +244,8 @@ class ContactInfoSetupForm extends ConfigFormBase {
 
   /**
    * Submit function for adding additional social media rows.
+   *
+   * {@inheritdoc}
    */
   public static function socialRows($form, &$form_state) {
     return $form['contact_info']['social'];

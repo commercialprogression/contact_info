@@ -1,16 +1,15 @@
 <?php
 
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Config\ImmutableConfig;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Url;
-
 /**
  * @file
  * Contact info module that provides blocks and tokens.
  */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_theme().
@@ -67,6 +66,7 @@ function contact_info_contextual_links_view_alter(&$element, $items) {
           )),
         );
         break;
+
       case 'social':
         $element['#links']['edit-content'] = array(
           'title' => 'Edit social media links',
@@ -84,15 +84,15 @@ function contact_info_contextual_links_view_alter(&$element, $items) {
 }
 
 /**
- * Reusable function to read the config for address and return something renderable
+ * Reusable function to return something renderable for address.
  *
  * @param \Drupal\Core\Config\ImmutableConfig $contact_info
- *   The config object saved by ContactInfoSetupForm
+ *   The config object saved by ContactInfoSetupForm.
  *
  * @return array
  *   A render array for the resulting element
  */
-function contact_info_create_address($contact_info = NULL) {
+function contact_info_create_address(ImmutableConfig $contact_info = NULL) {
   $variables = array();
   foreach ($contact_info->get('address') as $key => $value) {
     if (isset($value) && strlen($value)) {
@@ -105,19 +105,19 @@ function contact_info_create_address($contact_info = NULL) {
 }
 
 /**
- * Reusable function to read the config for fax and return something renderable
+ * Reusable function to read the config for fax and return something renderable.
  *
  * @param \Drupal\Core\Config\ImmutableConfig $contact_info
- *   The config object saved by ContactInfoSetupForm
+ *   The config object saved by ContactInfoSetupForm.
  *
  * @return array
  *   A render array for the resulting element
  */
-function contact_info_create_fax($contact_info = NULL) {
+function contact_info_create_fax(ImmutableConfig $contact_info = NULL) {
   $fax = $contact_info->get('fax');
   if (isset($fax['number']) && $fax['number']) {
     return array(
-      '#markup' => '<span itemprop="faxNumber">' . Html::escape($fax['number']) . '</span>'
+      '#markup' => '<span itemprop="faxNumber">' . Html::escape($fax['number']) . '</span>',
     );
   }
   else {
@@ -126,21 +126,21 @@ function contact_info_create_fax($contact_info = NULL) {
 }
 
 /**
- * Reusable function to read the config for map and return something renderable
+ * Reusable function to read the config for map and return something renderable.
  *
  * @param \Drupal\Core\Config\ImmutableConfig $contact_info
- *   The config object saved by ContactInfoSetupForm
+ *   The config object saved by ContactInfoSetupForm.
  * @param array $map_settings
- *   The config array saved from the MapBlock Form
+ *   The config array saved from the MapBlock Form.
  *
  * @return array
  *   A render array for the resulting element
  */
-function contact_info_create_map($contact_info = NULL, $map_settings = NULL) {
+function contact_info_create_map(ImmutableConfig $contact_info = NULL, $map_settings = NULL) {
   if ($map_settings == NULL) {
-    // Try to grab a pre-configured block for the map
+    // Try to grab a pre-configured block for the map.
     $map_settings = \Drupal::config('block.block.map');
-    // If it doesn't exist, use our default values
+    // If it doesn't exist, use our default values.
     $map_settings = array(
       'api_key' => $map_settings->get('api_key') != NULL ? $map_settings->get('api_key') : 'AIzaSyAkkBDnKYln9G2v8PLIFUiUUmqyyiZ4uxw',
       'width' => $map_settings->get('width') != NULL ? $map_settings->get('width') : '600',
@@ -172,15 +172,15 @@ function contact_info_create_map($contact_info = NULL, $map_settings = NULL) {
   }
 
   return array(
-    '#children' => $output
+    '#children' => $output,
   );
 }
 
 /**
- * Reusable function to read the config for phone and return something renderable
+ * Reusable function to return something renderable for phone.
  *
  * @param \Drupal\Core\Config\ImmutableConfig $contact_info
- *   The config object saved by ContactInfoSetupForm
+ *   The config object saved by ContactInfoSetupForm.
  *
  * @return array
  *   A render array for the resulting element
@@ -207,10 +207,10 @@ function contact_info_create_phone(ImmutableConfig $contact_info = NULL) {
 }
 
 /**
- * Reusable function to read the config for the social table and return something renderable
+ * Reusable function to return something renderable for the social table.
  *
  * @param \Drupal\Core\Config\ImmutableConfig $contact_info
- *   The config object saved by ContactInfoSetupForm
+ *   The config object saved by ContactInfoSetupForm.
  *
  * @return array
  *   A render array for the resulting element
@@ -244,12 +244,12 @@ function contact_info_create_social(ImmutableConfig $contact_info = NULL) {
     );
 
     foreach ($data as $social_site_key => $social_site) {
-      $output['social'][$social_site_key] =
-        Link::fromTextAndUrl($social_site['name'],
+      $output['social'][$social_site_key]
+        = Link::fromTextAndUrl($social_site['name'],
           Url::fromUri($social_site['url'],
             array(
               'html' => TRUE,
-              'attributes' => array()
+              'attributes' => array(),
             )
           )
         )->toRenderable();
@@ -262,12 +262,12 @@ function contact_info_create_social(ImmutableConfig $contact_info = NULL) {
 /**
  * Helper function to sort weights.
  *
- * @param integer $first
- *   The first value that needs sorting
- * @param integer $second
- *   The second value, to compare to the first
+ * @param int $first
+ *   The first value that needs sorting.
+ * @param int $second
+ *   The second value, to compare to the first.
  *
- * @return integer
+ * @return int
  *   Either returns the weight difference between the two values,
  *   or 0 if equal or not weighted
  */
@@ -279,13 +279,13 @@ function contact_info_sort_weight($first, $second) {
 }
 
 /**
- * Function to convert a phone number containing letters to all numbers
+ * Function to convert a phone number containing letters to all numbers.
  *
  * @param string $string
- *   A phone number string
+ *   A phone number string.
  *
  * @return string
- *  A phone number string consisting of only numbers
+ *   A phone number string consisting of only numbers.
  */
 function _contact_info_string_to_number($string) {
   $array = str_split($string);
@@ -298,10 +298,10 @@ function _contact_info_string_to_number($string) {
 }
 
 /**
- * Function to convert a phone number letter to a number
+ * Function to convert a phone number letter to a number.
  *
  * @param string $letter
- *   A single alphanumeric character
+ *   A single alphanumeric character.
  *
  * @return string
  *   An integer representation of the input letter, or an empty string
@@ -351,11 +351,12 @@ function _contact_info_letter_strip($letter) {
 
 /**
  * Helper function to render a draggable social table.
+ *
  * Determines if the add/remove buttons have been clicked for the
- * appropriate number of rows
+ * appropriate number of rows.
  *
  * @param array $social_table
- *   An array of saved values for the social table
+ *   An array of saved values for the social table.
  * @param array $form
  *   An associative array containing the structure of the form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
@@ -415,10 +416,10 @@ function _contact_info_social_draggable_table($social_table, &$form, FormStateIn
       '#suffix' => '</span>',
     );
 
-    // Add icon if any social media rows are present,
+    // Add icon if any social media rows are present.
     if (isset($social_table[$i]['url'])) {
-      $form['contact_info']['social']['table'][$i]['icon']['link'] =
-        Link::fromTextAndUrl($social_table[$i]['name'],
+      $form['contact_info']['social']['table'][$i]['icon']['link']
+        = Link::fromTextAndUrl($social_table[$i]['name'],
           Url::fromUri($social_table[$i]['url']))->toRenderable();
     }
 
