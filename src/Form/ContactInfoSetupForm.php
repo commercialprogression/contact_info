@@ -172,7 +172,8 @@ class ContactInfoSetupForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->config('contact_info.setup')
+    $config = $this->config('contact_info.setup');
+    $config
       ->set('address.country_name', $form_state->getValue(array(
         'contact_info',
         'address',
@@ -235,10 +236,10 @@ class ContactInfoSetupForm extends ConfigFormBase {
       )));
 
     foreach ($form_state->getValue(array('contact_info', 'social', 'table')) as $key => $value) {
-      $this->config('contact_info.setup')->set($key, $value);
+      $config->set('social.table.' . $key, $value);
     }
 
-    $this->config('contact_info.setup')->save();
+    $config->save();
     parent::submitForm($form, $form_state);
   }
 

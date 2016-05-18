@@ -194,12 +194,14 @@ function contact_info_create_phone(ImmutableConfig $contact_info = NULL) {
 
     $phone['machine'] = _contact_info_string_to_number($phone['number']);
 
-    return Link::fromTextAndUrl($phone['number'], Url::fromUri('tel:+' . $phone['country_code'] . $phone['machine'], array(
-      'attributes' => array(
-        'itemprop' => 'telephone',
-        'class' => array('telephone'),
-      ),
-    )))->toRenderable();
+    return array(
+      '#markup' => Link::fromTextAndUrl($phone['number'], Url::fromUri('tel:+' . $phone['country_code'] . $phone['machine'], array(
+        'attributes' => array(
+          'itemprop' => 'telephone',
+          'class' => array('telephone'),
+        ),
+      )))->toString(),
+    );
   }
   else {
     return FALSE;
