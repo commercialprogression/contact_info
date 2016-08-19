@@ -145,15 +145,18 @@ function contact_info_tokens($type, $tokens, array $data, array $options, \Drupa
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'address':
-          $replacements[$original] = $renderer->render(contact_info_create_address($contact_info));
+          $create_address = contact_info_create_address($contact_info);
+          $replacements[$original] = $renderer->render($create_address);
           break;
 
         case 'phone':
-          $replacements[$original] = $renderer->render(contact_info_create_phone($contact_info));
+          $create_phone = contact_info_create_phone($contact_info);
+          $replacements[$original] = $renderer->render($create_phone);
           break;
 
         case 'fax':
-          $replacements[$original] = $renderer->render(contact_info_create_fax($contact_info));
+          $create_fax = contact_info_create_fax($contact_info);
+          $replacements[$original] = $renderer->render($create_fax);
           break;
 
         case 'social_seo':
